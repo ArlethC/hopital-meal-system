@@ -1,0 +1,5 @@
+{
+  "name": "hospital-meal-system",
+  "private": true,
+  "workspaces": ["shared", "Backend", "Frontend"]
+}
