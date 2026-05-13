@@ -7,7 +7,6 @@
 */
 import { Request, Response, NextFunction } from 'express';
 import { crear, modificar, desactivar, obtenertodos } from '../services/horariosTiempoComida.service';
-import { convertirHoraA_HHmm } from '../utils/funcionesFormatear';
 
 export const crearHorarioTiempoComida = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -22,13 +21,7 @@ export const crearHorarioTiempoComida = async (req: Request, res: Response, next
       return;
     }
 
-    const dataModificado = horariosComida.map((item) => ({
-      ...item,
-      horaCierre: convertirHoraA_HHmm(item.horaCierre),
-      horaModificacion: convertirHoraA_HHmm(item.horaModificacion),
-    }));
-
-    res.status(200).json(dataModificado[0]);
+    res.status(200).json(horariosComida[0]);
 
   } catch (error: any) {
     next(error);
@@ -44,13 +37,8 @@ export const obtener = async (req: Request, res: Response, next: NextFunction) =
       return;
     }
 
-    const dataModificado = horariosComida.map((item) => ({
-      ...item,
-      horaCierre: convertirHoraA_HHmm(item.horaCierre),
-      horaModificacion: convertirHoraA_HHmm(item.horaModificacion),
-    }));
 
-    res.status(200).json({ data: dataModificado });
+    res.status(200).json({ data: horariosComida });
 
   } catch (error: any) {
     next(error);
@@ -71,13 +59,7 @@ export const actualizarHorarioComida = async (req: Request, res: Response, next:
       return;
     }
 
-    const dataModificado = registroModificado.map((item) => ({
-      ...item,
-      horaCierre: convertirHoraA_HHmm(item.horaCierre),
-      horaModificacion: convertirHoraA_HHmm(item.horaModificacion),
-    }));
-
-    res.status(200).json(dataModificado[0]);
+    res.status(200).json(registroModificado[0]);
   } catch (error: any) {
     next(error);
   }

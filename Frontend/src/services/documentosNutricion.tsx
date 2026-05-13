@@ -10,7 +10,7 @@ import type { Documento } from '@miapp/shared';
 
 export type ResponseBackend = {
     id: number;
-    Valor: string;
+    valor: string;
 }[];
 
 export type CrearDocumento = {

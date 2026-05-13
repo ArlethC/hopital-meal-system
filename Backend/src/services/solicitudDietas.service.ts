@@ -155,7 +155,7 @@ export async function verificarEstadoSolicitud(idDetalle: number, estadosPermiti
     SELECT 1
     FROM Solicitud_dietas s 
     INNER JOIN Detalles_solicitud_dietas d ON s.solicitud_id = d.solicitud_id
-    WHERE d.id_detalle = @idDetalle
+    WHERE d.detalle_id = @idDetalle
       AND s.estado_solicitud IN (${estados})
   `;
 
@@ -186,7 +186,7 @@ export async function obtenersolicitudes({ pag, limite, offset, sala, idTiempoCo
         parametros.push({ nombre: 'idSolicitud', valor: idSolicitud });
     }
     if (sala) {
-        condiciones.push('s.nombre_sala = @sala');
+        condiciones.push('s.sala_nombre = @sala');
         parametros.push({ nombre: 'sala', valor: sala });
     }
     if (idTiempoComida) {
@@ -215,7 +215,7 @@ export async function obtenersolicitudes({ pag, limite, offset, sala, idTiempoCo
     `;
 
     const queryDatos = `
-    SELECT solicitud_id, nombre_sala, CONVERT(VARCHAR(10), fecha_entrega, 120) as fechaEntrega, 
+    SELECT solicitud_id, sala_nombre, CONVERT(VARCHAR(10), fecha_entrega, 120) as fechaEntrega, 
            creacion_usuario, fecha_creacion, tiempo.id_valor_catalogo AS idTiempoComida,
            tiempo.valor_catalogo AS tiempoComida, estado.id_valor_catalogo AS idEstado, estado.valor_catalogo AS estado
     ${where}
@@ -242,49 +242,6 @@ export async function obtenersolicitudes({ pag, limite, offset, sala, idTiempoCo
     };
 }
 
-export async function obtenerHistorial(id: number) {
-    const query = `SELECT h.columna_modificada,
-    CASE 
-        WHEN h.columna_modificada = 'id_dieta_vigente' THEN a.descripcion
-        WHEN h.columna_modificada = 'detalle_estado' AND h.operacion = 'cancelar_reactivar' THEN 
-            CASE 
-                WHEN h.valor_anterior = @estadoCancelado THEN 'Cancelada'
-                ELSE 'Reactivada'
-            END
-        ELSE h.valor_anterior
-    END AS valor_anterior,
-    CASE 
-        WHEN h.columna_modificada = 'detalle_estado' AND h.operacion = 'cancelar_reactivar' THEN
-            CASE 
-                WHEN h.nuevo_valor = @estadoCancelado THEN 'Cancelada'
-                ELSE 'Reactivada'
-            END
-        ELSE h.valor_anterior
-    END AS valor_nuevo,
-    h.cambio_fecha,
-    h.cambio_usuario
-FROM Historial_app_cocina h
-LEFT JOIN Dietas a ON h.columna_modificada = 'id_dieta_vigente' 
-    AND h.valor_anterior = a.dieta
-WHERE h.tabla_afectada = 'Detalles_solicitud_dietas'
-  AND ( h.columna_modificada IN ( 'obs_enfermeria', 'obs_nutricion', 'id_dieta_vigente')
-      OR (h.columna_modificada = 'detalle_estado' AND h.operacion = 'cancelar_reactivar'))
-  AND h.id_registro = @idDetalle
-ORDER BY h.cambio_fecha DESC;`;
-
-    const historial = await bd.consultaBD(query, [
-        { nombre: 'idDetalle', valor: id },
-        { nombre: 'estadoCancelado', valor: ESTADOS_DETALLE.CANCELADA}
-    ]);
-
-    const datosLimpios = historial.recordset.map(obj =>
-        Object.fromEntries(
-            Object.entries(obj).map(([key, value]) => [key, value === null ? "" : value])
-        )
-    );
-
-    return datosLimpios;
-}
 
 export async function obtenerEdificio(sala: String, fecha: string) {
 
@@ -294,7 +251,7 @@ export async function obtenerEdificio(sala: String, fecha: string) {
     ])
 
     if (datos.recordset.length > 0) {
-        return datos.recordset[0]?.Edificio;
+        return datos.recordset[0]?.edificio;
     }
 
     return '';
@@ -316,7 +273,7 @@ FROM Solicitud_dietas
 WHERE solicitud_id = @idSolicitud
 AND estado_solicitud = @estado`, [
         { nombre: 'idSolicitud', valor: idSolicitud },
-        { nombre: 'estado', valor: ESTADOS_SOLICITUD.ENVIADA_SALA },
+        { nombre: 'estado', valor: ESTADOS_SOLICITUD.ENVIADA_SALA.id },
     ]);
 
     if (estadoSolicitud.recordset.length === 0) {
@@ -332,7 +289,7 @@ export async function marcarSolicitudRecibida(idSolicitud: number, usuario: stri
 
         const result = await request
             .input('idSolicitud', idSolicitud)
-            .input('nuevoEstado', ESTADOS_SOLICITUD.RECIBIDA)
+            .input('nuevoEstado', ESTADOS_SOLICITUD.RECIBIDA.id)
             .query(`
         UPDATE Solicitud_dietas
         SET estado_solicitud = @nuevoEstado
@@ -358,7 +315,7 @@ export async function marcarSolicitudRecibida(idSolicitud: number, usuario: stri
         await registrarHistorial({
             tabla: 'Solicitud_dietas',
             idRegistro: idSolicitud,
-            cambios: [{ campo: 'estado_solicitud', valorAnterior: '', nuevoValor: `${ESTADOS_SOLICITUD.RECIBIDA}` }],
+            cambios: [{ campo: 'estado_solicitud', valorAnterior: '', nuevoValor: `${ESTADOS_SOLICITUD.RECIBIDA.id}` }],
             operacion: TipoOperacion.CAMBIO_ESTADO,
             usuario: usuario,
             ipUsuario: ipUsuario,
@@ -394,7 +351,7 @@ export async function marcarSolicitudRecibidaParcial(idSolicitud: number, idDeta
 
         const result = await request
             .input('idSolicitud', idSolicitud)
-            .input('nuevoEstado', ESTADOS_SOLICITUD.RECIBIDA)
+            .input('nuevoEstado', ESTADOS_SOLICITUD.RECIBIDA.id)
             .query(`
         UPDATE Solicitud_dietas
         SET estado_solicitud = @nuevoEstado
@@ -425,7 +382,7 @@ export async function marcarSolicitudRecibidaParcial(idSolicitud: number, idDeta
         await registrarHistorial({
             tabla: 'Solicitud_dietas',
             idRegistro: idSolicitud,
-            cambios: [{ campo: 'estado_solicitud', valorAnterior: '', nuevoValor: `${ESTADOS_SOLICITUD.RECIBIDA}` }],
+            cambios: [{ campo: 'estado_solicitud', valorAnterior: '', nuevoValor: `${ESTADOS_SOLICITUD.RECIBIDA.id}` }],
             operacion: TipoOperacion.CAMBIO_ESTADO,
             usuario: usuario,
             ipUsuario: ipUsuario,
@@ -500,9 +457,9 @@ WHERE
 
         const result = await bd.consultaBD(query, [
             { nombre: 'idTiempoComida', valor: idTiempoComida },
-            { nombre: 'recibidaReclamo', valor: ESTADOS_SOLICITUD.R_RECLAMO },
-            { nombre: 'cerrada', valor: ESTADOS_SOLICITUD.CERRADA },
-            { nombre: 'cerradaReclamo', valor: ESTADOS_SOLICITUD.C_RECLAMO },
+            { nombre: 'recibidaReclamo', valor: ESTADOS_SOLICITUD.R_RECLAMO.id },
+            { nombre: 'cerrada', valor: ESTADOS_SOLICITUD.CERRADA.id },
+            { nombre: 'cerradaReclamo', valor: ESTADOS_SOLICITUD.C_RECLAMO.id },
             { nombre: 'estadoDetalleReclamo', valor: ESTADOS_DETALLE.RECLAMO },
         ])
 

@@ -42,9 +42,10 @@ export const crearMeriendaPaciente = async (req: Request, res: Response, next: N
 
         if (nuevaMerienda && nuevaMerienda.length === 0) {
             res.status(400).json({ error: "Error al crear la merienda" });
+        }else{
+            res.status(200).json({ message: 'Merienda creada' });
         }
 
-        res.status(200).json({ message: 'Merienda creada' });
     } catch (error: any) {
         next(error);
     }

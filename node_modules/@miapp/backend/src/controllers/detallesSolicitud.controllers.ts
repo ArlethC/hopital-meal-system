@@ -8,7 +8,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { TIEMPOS_COMIDA, ESTADOS_SOLICITUD } from '../config/Constantes';
 import {verificarEstadoSolicitud} from '../services/solicitudDietas.service';
-import { modificarDetalleSolicitud, obtenerDetalle, obtenerDetallesSolicitud, reactivarDetalleSolicitud, cancelarDetalleSolicitud, puedeModificarHorario } from '../services/detallesSolicitud.service';
+import { modificarDetalleSolicitud, obtenerDetalle, obtenerDetallesSolicitud, reactivarDetalleSolicitud, cancelarDetalleSolicitud, puedeModificarHorario, obtenerHistorial } from '../services/detallesSolicitud.service';
 
 
 export async function modificarDietasObs(req: Request, res: Response, next: NextFunction) {
@@ -20,7 +20,7 @@ export async function modificarDietasObs(req: Request, res: Response, next: Next
 
     const puedeModificar = await verificarEstadoSolicitud(
       id,
-      [ESTADOS_SOLICITUD.ENVIADA_COCINA, ESTADOS_SOLICITUD.MODIFICADA],
+      [ESTADOS_SOLICITUD.ENVIADA_COCINA.id, ESTADOS_SOLICITUD.MODIFICADA.id],
       [TIEMPOS_COMIDA.MERIENDA_AM, TIEMPOS_COMIDA.MERIENDA_PM]);
 
     if (!puedeModificar) {
@@ -54,7 +54,7 @@ export async function modificarNutricion(req: Request, res: Response, next: Next
 
     const puedeModificar = await verificarEstadoSolicitud(
       id,
-      [ESTADOS_SOLICITUD.ENVIADA_COCINA, ESTADOS_SOLICITUD.MODIFICADA],
+      [ESTADOS_SOLICITUD.ENVIADA_COCINA.id, ESTADOS_SOLICITUD.MODIFICADA.id],
       [TIEMPOS_COMIDA.MERIENDA_AM, TIEMPOS_COMIDA.MERIENDA_PM]);
 
     if (!puedeModificar) {
@@ -87,7 +87,7 @@ export async function modificarCocina(req: Request, res: Response, next: NextFun
     const ipUsuario: string = req.ip ?? 'IP_DESCONOCIDA';
 
     const puedeModificar = await verificarEstadoSolicitud(id,
-      [ESTADOS_SOLICITUD.ENVIADA_COCINA, ESTADOS_SOLICITUD.MODIFICADA, ESTADOS_SOLICITUD.ENVIADA_SALA],
+      [ESTADOS_SOLICITUD.ENVIADA_COCINA.id, ESTADOS_SOLICITUD.MODIFICADA.id, ESTADOS_SOLICITUD.ENVIADA_SALA.id],
       [TIEMPOS_COMIDA.MERIENDA_AM, TIEMPOS_COMIDA.MERIENDA_PM]);
 
     if (!puedeModificar) {
@@ -167,6 +167,23 @@ export async function detallesSolicitud(req: Request, res: Response, next: NextF
     }
 
     res.status(200).json(detalles);
+
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function obtenerHistorialController(req: Request, res: Response, next: NextFunction) {
+  try {
+    const { id } = req.params;
+
+    const historial = await obtenerHistorial(Number(id));
+
+    if (historial.length === 0) {
+      res.status(204).json({ message: "No existe historial de cambios para este detalle" });
+      return;
+    }
+    res.status(200).json(historial);
 
   } catch (error) {
     next(error);

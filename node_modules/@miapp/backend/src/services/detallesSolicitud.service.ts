@@ -13,7 +13,7 @@ import { obtenerEdificio } from './solicitudDietas.service';
 import { validarDietaExiste } from "./dietas.service";
 import { validarHorario } from "../services/horariosTiempoComida.service";
 import { validarYCompararFecha } from '../utils/validaciones';
-import { toDetalleOrdentDto } from "../dtos/detallesSolicitud.dto";
+import { toDetalleOrdentDto, toHistorialDto } from "../dtos/detallesSolicitud.dto";
 import type { DetalleOrden } from "@miapp/shared";
 
 export async function verificarEstadoDetalle(idDetalle: number, idEstado: number) {
@@ -100,7 +100,7 @@ WHERE solicitud_id = @idSolicitud`, [{ nombre: 'idSolicitud', valor: idSolicitud
     }));
 
     if (incluirDietas && (datosSolicitud.recordset[0].id_comida !== TIEMPOS_COMIDA.MERIENDA_AM  || datosSolicitud.recordset[0].id_comida !== TIEMPOS_COMIDA.MERIENDA_PM)) {
-        const pacientesConDietas = await asignarDietasValidasEdad(detalles.recordset, datosSolicitud.recordset[0].id_comida);
+        const pacientesConDietas = await asignarDietasValidasEdad(detallesTransformados, datosSolicitud.recordset[0].id_comida);
         return pacientesConDietas.map(toDetalleOrdentDto);
     }
 
@@ -134,7 +134,7 @@ WHERE solicitud_id = (
 	SELECT solicitud_id 
 	FROM Detalles_solicitud_dietas 
 	WHERE detalle_id = @idDetalle )`, [
-        { nombre: 'estado', valor: ESTADOS_SOLICITUD.MODIFICADA },
+        { nombre: 'estado', valor: ESTADOS_SOLICITUD.MODIFICADA.id },
         { nombre: 'idDetalle', valor: id },
     ])
 
@@ -157,7 +157,7 @@ export async function reactivarDetalleSolicitud(id: number, usuario: string, use
 
     const valorAnterior = await bd.consultaBD(`SELECT TOP(1) valor_anterior
     FROM Historial_app_cocina 
-    WHERE tabla_afectada = 'Detalles_solicitud_dietas' AND campo_modificado = 'detalle_estado' 
+    WHERE tabla_afectada = 'Detalles_solicitud_dietas' AND columna_modificada = 'detalle_estado' 
 	    AND id_registro = @idDetalle
     ORDER BY cambio_fecha DESC`, [{ nombre: 'idDetalle', valor: id }])
 
@@ -196,15 +196,15 @@ FROM Detalles_solicitud_dietas det
         throw new HttpError("Recurso no encontrado", 404);
     }
 
-
     if (modificado) {
         const tiempoComida = await tiempoComidaDetalle(idDetalle);
 
         const pacientesConDietas = await asignarDietasValidasEdad(detalles.recordset, tiempoComida);
-        return pacientesConDietas[0];
+
+        return toDetalleOrdentDto(pacientesConDietas[0]);
     }
 
-    return detalles.recordset[0].map(toDetalleOrdentDto);
+    return toDetalleOrdentDto(detalles.recordset[0]);
 }
 
 export async function puedeModificarHorario(idDetalle: number): Promise<boolean> {
@@ -233,4 +233,48 @@ FROM Detalles_solicitud_dietas det
 WHERE det.detalle_id = @idDetalle`, [{ nombre: 'idDetalle', valor: idDetalle }]);
 
     return tiempoComida.recordset[0].id_comida;
+}
+
+export async function obtenerHistorial(id: number) {
+    const query = `SELECT h.columna_modificada,
+    CASE 
+        WHEN h.columna_modificada = 'id_dieta_vigente' THEN a.descripcion
+        WHEN h.columna_modificada = 'detalle_estado' AND h.operacion = 'cancelar_reactivar' THEN 
+            CASE 
+                WHEN h.valor_anterior = @estadoCancelado THEN 'Cancelada'
+                ELSE 'Reactivada'
+            END
+        ELSE h.valor_anterior
+    END AS valor_anterior,
+    CASE 
+        WHEN h.columna_modificada = 'detalle_estado' AND h.operacion = 'cancelar_reactivar' THEN
+            CASE 
+                WHEN h.nuevo_valor = @estadoCancelado THEN 'Cancelada'
+                ELSE 'Reactivada'
+            END
+        ELSE h.valor_anterior
+    END AS valor_nuevo,
+    h.cambio_fecha,
+    h.cambio_usuario
+FROM Historial_app_cocina h
+LEFT JOIN Dietas a ON h.columna_modificada = 'id_dieta_vigente' 
+    AND h.valor_anterior = a.id_dieta
+WHERE h.tabla_afectada = 'Detalles_solicitud_dietas'
+  AND ( h.columna_modificada IN ( 'obs_enfermeria', 'obs_nutricion', 'id_dieta_vigente')
+      OR (h.columna_modificada = 'detalle_estado' AND h.operacion = 'cancelar_reactivar'))
+  AND h.id_registro = @idDetalle
+ORDER BY h.cambio_fecha DESC;`;
+
+    const historial = await bd.consultaBD(query, [
+        { nombre: 'idDetalle', valor: id },
+        { nombre: 'estadoCancelado', valor: ESTADOS_DETALLE.CANCELADA}
+    ]);
+
+    const datosLimpios = historial.recordset.map(obj =>
+        Object.fromEntries(
+            Object.entries(obj).map(([key, value]) => [key, value === null ? "" : value])
+        )
+    );
+
+    return datosLimpios.map(toHistorialDto);
 }

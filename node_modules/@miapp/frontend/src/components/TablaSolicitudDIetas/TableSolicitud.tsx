@@ -13,7 +13,7 @@ import type { PacienteUi, PacienteModificar, PacienteFinalizado, Dieta } from '.
 import { obtenerValorCampo, puedeEditar, puedeVerColumna, esPacienteNoCrear, getPacienteKey } from './utils/tablaUtils';
 import AccionesCell from './AccionesCelda';
 import HistorialRow from './HistorialFila';
-import { obtenerHistorialDetalle } from '../../services/solicitudDietas';
+import { obtenerHistorialDetalle } from '../../services/detallesSolicitud';
 import ConfirmDialog from "../ConfimModal";
 import { useNotifications } from '../../hooks/notificacionHook';
 import { mapDetalleOrdenToPacienteModificar } from "../../utils/formatear"
@@ -24,6 +24,7 @@ import { FormularioReclamoContainer } from "../ContenedorReclamo";
 
 import DietaCell from './CeldaDieta';
 import CeldaObservacion from './celdaObservacion';
+import TablaEncabezado from './TablaEncabezado';
 
 interface PropsTabla {
     estado: string;
@@ -275,7 +276,6 @@ const TablaOrdenesDieta: React.FC<PropsTabla> = ({
         }
     };
 
-
     const abrirModal = (tipo: string, paciente: PacienteUi) => {
         setModalAbierto(tipo);
         setPacienteSeleccionado(paciente);
@@ -329,7 +329,6 @@ const TablaOrdenesDieta: React.FC<PropsTabla> = ({
         return null;
     };
 
-
     const renderCeldaImprimir = (paciente: PacienteUi) => {
 
         const idPaciente = String(getPacienteKey(paciente));
@@ -373,78 +372,11 @@ const TablaOrdenesDieta: React.FC<PropsTabla> = ({
         <div className="p-6 w-full overflow-x-auto">
             <div className="overflow-x-auto">
                 <table className="min-w-full bg-white border border-gray-200" aria-label="Listado de detalles de una solicitude de dieta">
-                    <thead className="bg-gray-50">
-                        <tr>
-                            {estado === 'crear' && (
-                                <th className="w-[40px] px-2 py-3 text-left text-xs font-medium text-gray-500 tracking-wider border-b">
-                                    Seleccionar
-                                </th>
-                            )}
-                            {estado === 'modificar' && (
-                                <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 tracking-wider border-b">
-                                    Acciones
-                                </th>
-                            )}
-                            {(estado !== 'modificar' && estado !== 'crear') && (
-                                <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 tracking-wider border-b">
-                                    &nbsp;
-                                </th>
-                            )}
-                            <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 tracking-wider border-b">
-                                Cama
-                            </th>
-                            <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 tracking-wider border-b">
-                                Paciente
-                            </th>
-                            <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 tracking-wider border-b">
-                                Edad
-                            </th>
-                            <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 tracking-wider border-b">
-                                Tipo Dieta
-                            </th>
-                            {puedeVerColumna('observaciones', permisoUsuario, estado) && (
-                                <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 tracking-wider border-b">
-                                    Observaciones Nutricionales
-                                </th>
-                            )}
-                            {puedeVerColumna('obsEnfermeria', permisoUsuario, estado) && (
-                                <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 tracking-wider border-b">
-                                    Observación enfermería
-                                </th>
-                            )}
-                            {puedeVerColumna('obsNutricion', permisoUsuario, estado) && (
-                                <th className="px-2 py-3 text-left text-xs font-medium text-gray-500  tracking-wider border-b">
-                                    Observación nutrición
-                                </th>
-                            )}
-                            <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 tracking-wider border-b">
-                                Alergia e Intolerancias
-                            </th>
-                            <th className="px-2 py-3 text-left text-xs font-medium text-gray-500  tracking-wider border-b">
-                                Documentos nutrición
-                            </th>
-                            {puedeVerColumna('obsCocina', permisoUsuario, estado) && (
-                                <th className="px-2 py-3 text-left text-xs font-medium text-gray-500  tracking-wider border-b">
-                                    Comentario Cocina
-                                </th>
-                            )}
-                            {puedeVerColumna('recibido', permisoUsuario, estado) && (
-                                <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 tracking-wider border-b">
-                                    Recibido
-                                </th>
-                            )}
-                            {puedeVerColumna('reclamo', permisoUsuario, estado) && (
-                                <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 tracking-wider border-b">
-                                    Reclamo
-                                </th>
-                            )}
-                            {puedeVerColumna('imprimir', permisoUsuario, estado) && (
-                                <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 tracking-wider border-b">
-                                    Etiqueta
-                                </th>
-                            )}
-                        </tr>
-                    </thead>
+                    <TablaEncabezado
+                        estado={estado}
+                        permisoUsuario={permisoUsuario}
+                        puedeVerColumna={puedeVerColumna}
+                    />
                     <tbody className="bg-white divide-y divide-gray-200">
                         {pacientes.map((paciente) => (
                             <React.Fragment key={getPacienteKey(paciente)}>
@@ -625,7 +557,7 @@ const TablaOrdenesDieta: React.FC<PropsTabla> = ({
                                                             title="Crear reclamo"
                                                         >
                                                             <span className="text-sm">Crear</span>
-                                                            
+
                                                         </button>
                                                     )
                                                 )

@@ -76,11 +76,11 @@ export async function obtenerTiemposComida() {
 }
 
 export async function dietasMeriendas() {
-    const dietas = bd.consultaBD(`SELECT A.id_dieta AS codigo, A.descripcion AS nombre
+    const dietas = await bd.consultaBD(`SELECT A.id_dieta AS codigo, A.descripcion AS nombre
     FROM Dietas A
     WHERE A.activo = 1
       AND A.descripcion LIKE 'M%'`);
 
-    return dietas;
+    return dietas.recordset;
 }
 

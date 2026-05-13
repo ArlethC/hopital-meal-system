@@ -5,7 +5,7 @@
     Fecha creacion: 7/07/2025
     Version: 1.0.0
 */
-import {ValorCatalogoMedico} from './ValorCatalogoAtencionMedica';
+import { ValorCatalogoMedico } from './ValorCatalogoAtencionMedica';
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, JoinColumn, ManyToOne } from 'typeorm';
 
 @Entity({ name: 'Horario_comida' })
@@ -40,8 +40,9 @@ export class HorariosTiempoComida {
   @Column({ name: 'ip_equipo_creacion', type: 'varchar', length: 50, nullable: true })
   ipUsuarioCreacion?: string | null;
 
+
   @ManyToOne(() => ValorCatalogoMedico)
-  @JoinColumn({ name: 'id_comida', referencedColumnName: 'valor' })
-  valor?: ValorCatalogoMedico;
+    @JoinColumn({ name: 'id_comida' })
+    ValorCatalogoMedico!: ValorCatalogoMedico;
 
 }

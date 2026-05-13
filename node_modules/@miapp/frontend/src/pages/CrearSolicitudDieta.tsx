@@ -209,7 +209,7 @@ const DietasCreatePage = () => {
             return;
         }
         const datos = {
-            Edificio: edificio,
+            edificio: edificio,
             sala: sala,
             usuario: usuario,
             fecha: deliveryDate,

@@ -11,6 +11,7 @@ import type {
    ModificacionNutricion,
    ModificacionEnfermeria,
    DetalleOrden,
+   Historial,
 } from '../types/solicitud';
 
 export async function obtenerDetalleSolicitud(id: string): Promise<DetalleOrden[]> {
@@ -48,4 +49,8 @@ export async function obtenerDetSolicitud(id: string): Promise<DetalleOrden[]> {
     return response.data;
 }
 
+export async function obtenerHistorialDetalle(id: string): Promise<Historial[]> {
+    const response = await api.get<Historial[]>(`/api/solicitud/detalles/historial/${id}`);
+    return response.data;
+}
 

@@ -14,7 +14,7 @@ loadEnv();
 export const OrigenDatos = new DataSource({
     type: "mssql", 
     host: process.env.DB_HOST,
-    port: parseInt(process.env.DB_PORT || "3306"),
+    port: parseInt(process.env.DB_PORT || "1433"),
     username: process.env.DB_USUARIO,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE,

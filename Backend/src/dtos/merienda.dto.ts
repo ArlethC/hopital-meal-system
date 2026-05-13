@@ -61,13 +61,13 @@ export const crearMerienda = z.object({
 
 export function toMeriendaDto(merienda: any): Merienda {
   return {
-    id: merienda,
-    dieta: merienda,
-    observacion: merienda,
-    tiempoComida: merienda,
-    fechaInicial: merienda,
-    fechaFinal: merienda,
-    estado: merienda,
+    id: merienda.id,
+    dieta: merienda.descripcion,
+    observacion: merienda.obs_merienda,
+    tiempoComida: merienda.comida,
+    fechaInicial: merienda.fechaInicial,
+    fechaFinal: merienda.fechaFinal,
+    estado: merienda.vigencia,
   };
 }
 export type CrearMerienda = z.infer<typeof crearMerienda>;

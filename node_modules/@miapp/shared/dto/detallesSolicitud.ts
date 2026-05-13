@@ -33,9 +33,19 @@ export interface OrdenBase {
   fechaCreacion: string;
   tiempoComida: string;
   estado: string;
+  tabla: string;
+  code: string;
 }
 
 export interface ValorCatalogo {
   id: number;
   valor: string;
 };
+
+export interface Historial {
+  campoModificado: string;
+  valorAnterior: string;
+  valorNuevo: string;
+  fechaCambio: string;
+  usuarioCambio: string;
+}

@@ -60,6 +60,7 @@ export async function crearDetallesMerienda(datos: CrearMerienda, usuario: strin
         ])
         .getMany();
 
+
     if (meriendasActivas.length >= 2) {
         throw new HttpError("No puede tener mas de dos meriendas activas por paciente", 422);
     }
@@ -126,7 +127,7 @@ export async function meriendasPaciente(expediente: string, mostrarTodas: boolea
 
     const query = repo
         .createQueryBuilder('m')
-        .innerJoin('m.valor', 'v')
+        .innerJoin('m.ValorCatalogoMedico', 'v')
         .innerJoin(
             qb => qb.select('*').from('Dietas', 'a'),
             'a',
@@ -134,9 +135,9 @@ export async function meriendasPaciente(expediente: string, mostrarTodas: boolea
         )
         .where('m.expediente = :expediente', { expediente })
         .select([
-            'm.idDetalleMerienda',
+            'm.idDetalleMerienda AS id',
             'a.descripcion ',
-            'v.valor',
+            'v.valor AS comida',
             'm.observacion ',
             `FORMAT(m.fechaInicioMerienda, 'dd-MM-yyyy') AS fechaInicial`,
             `FORMAT(m.fechaFinMerienda, 'dd-MM-yyyy') AS fechaFinal`,
@@ -155,12 +156,12 @@ export async function meriendasPaciente(expediente: string, mostrarTodas: boolea
     query.offset(offset)
     query.limit(limite);
 
-    const data = await query.getRawAndEntities();
+    const data = await query.getRawMany();
 
     const total = await queryTotal.getCount();
 
     return {
-        data: data.raw.map(toMeriendaDto),
+        data: data.map(toMeriendaDto),
         total: total,
         page: Math.floor(offset / limite) + 1,
         pageSize: limite,

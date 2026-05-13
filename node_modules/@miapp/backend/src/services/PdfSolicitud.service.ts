@@ -56,10 +56,10 @@ export async function generarPDF(datos: OrdenDietaPDF) {
 
         doc.setFont("Helvetica");
 
-        const imagePath = path.join(__dirname, '../images/logo.jpeg');
+        const imagePath = path.join(__dirname, '../images/logo.png');
         const logo = fs.readFileSync(imagePath, { encoding: 'base64' });
 
-        doc.addImage(logo, "JPEG", 25, 4, 20, 20);
+        doc.addImage(logo, "PNG", 25, 4, 30, 20);
 
         const pageWidth = doc.internal.pageSize.getWidth();
 
@@ -68,7 +68,7 @@ export async function generarPDF(datos: OrdenDietaPDF) {
         doc.text(`HOSPITAL RIOS
 DIRECCIÓN DE GESTIÓN DE PACIENTES
 SOLICITUD DE ALIMENTOS
-REG-P-HOST-003`,
+REG-HOST-000`,
             pageWidth / 2, 8, { align: 'center' });
 
         doc.setFontSize(10);
@@ -193,8 +193,8 @@ export async function cambiarEstadoSolicitud(idSolicitud: number, usuario: strin
     const estadoSolicitud = await bd.consultaBD(`SELECT 1
 FROM Solicitud_dietas 
 WHERE solicitud_id = @idSolicitud AND estado_solicitud IN ( @d1, @d2)`, [
-        { nombre: 'd1', valor: ESTADOS_SOLICITUD.ENVIADA_COCINA },
-        { nombre: 'd2', valor: ESTADOS_SOLICITUD.MODIFICADA },
+        { nombre: 'd1', valor: ESTADOS_SOLICITUD.ENVIADA_COCINA.id },
+        { nombre: 'd2', valor: ESTADOS_SOLICITUD.MODIFICADA.id },
         { nombre: 'idSolicitud', valor: idSolicitud },
     ]);
 
@@ -205,13 +205,13 @@ SET estado_solicitud = @estado
 WHERE solicitud_id = @idSolicitud 
 AND fecha_entrega = CAST(GETDATE() AS DATE)`, [
             { nombre: 'idSolicitud', valor: idSolicitud },
-            { nombre: 'estado', valor: ESTADOS_SOLICITUD.ENVIADA_SALA },
+            { nombre: 'estado', valor: ESTADOS_SOLICITUD.ENVIADA_SALA.id },
         ]);
 
         await registrarHistorial({
             tabla: 'Solicitud_dietas',
             idRegistro: idSolicitud,
-            cambios: [{ campo: 'estado_solicitud', valorAnterior: '', nuevoValor: `${ESTADOS_SOLICITUD.ENVIADA_SALA}` }],
+            cambios: [{ campo: 'estado_solicitud', valorAnterior: '', nuevoValor: `${ESTADOS_SOLICITUD.ENVIADA_SALA.id}` }],
             operacion: TipoOperacion.CAMBIO_ESTADO,
             usuario: usuario,
             ipUsuario: ipUsuario,

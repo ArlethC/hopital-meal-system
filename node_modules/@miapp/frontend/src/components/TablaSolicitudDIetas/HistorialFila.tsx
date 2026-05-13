@@ -23,10 +23,10 @@ const agruparPorCampo = (historial: Historial[]) => {
     const agrupado = new Map<string, Historial[]>();
 
     historial.forEach(cambio => {
-        if (!agrupado.has(cambio.campo_modificado)) {
-            agrupado.set(cambio.campo_modificado, []);
+        if (!agrupado.has(cambio.campoModificado)) {
+            agrupado.set(cambio.campoModificado, []);
         }
-        agrupado.get(cambio.campo_modificado)!.push(cambio);
+        agrupado.get(cambio.campoModificado)!.push(cambio);
     });
 
     return agrupado;
@@ -45,9 +45,9 @@ const HistorialRow: React.FC<Props> = ({
     const campos = [...historialAgrupado.keys()];
     const maxCambios = Math.max(...campos.map(campo => historialAgrupado.get(campo)!.length));
     const nombresCampos: Record<string, string> = {
-        observacion_enfermeria: 'Observación enfermeria',
-        observacion_nutricion: 'Observación nutrición',
-        id_ARTICULO_vigente: 'Tipo dieta',
+        obs_enfermeria: 'Observación enfermeria',
+        obs_nutricion: 'Observación nutrición',
+        id_dieta_vigente: 'Tipo dieta',
         estado_detalle: 'Cancelado/reactivado'
     };
 
@@ -91,15 +91,15 @@ const HistorialRow: React.FC<Props> = ({
                                                                     {campo === 'estado_detalle' ? 'Nuevo valor:' : 'Valor anterior:'}
                                                                 </strong>{" "}
                                                                 {campo === 'estado_detalle'
-                                                                    ? cambio.valor_nuevo || 'Sin valor'
-                                                                    : cambio.valor_anterior || 'Sin valor'}
+                                                                    ? cambio.valorNuevo || 'Sin valor'
+                                                                    : cambio.valorAnterior || 'Sin valor'}
                                                             </div>
 
                                                             <div>
-                                                                Cambio por: <span className="text-blue-600">{cambio.usuario_cambio}</span>
+                                                                Cambio por: <span className="text-blue-600">{cambio.usuarioCambio}</span>
                                                             </div>
                                                             <div className="italic text-gray-600 text-xs">
-                                                                {fechaATexto(cambio.fecha_cambio)}
+                                                                {fechaATexto(cambio.fechaCambio)}
                                                             </div>
                                                         </>
                                                     ) : (

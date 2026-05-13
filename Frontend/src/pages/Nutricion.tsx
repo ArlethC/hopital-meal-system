@@ -18,7 +18,7 @@ import SearchBar from "../components/SearchBar";
 import PatientDocuments from '../components/ListDocumentos';
 import { ModalForm } from '../components/ModalForm';
 import Dropdown from '../components/Dropdown';
-import { PatienteMeriendas } from '../components/PacienteMeriendas';
+import { PacienteMeriendas } from '../components/PacienteMeriendas';
 
 import { desactivarDocumentoNutri, obtenerTiposDocumento, type ResponseBackend, type CrearDocumento, crearDocumentoNutri } from "../services/documentosNutricion";
 import { useUnsavedChangesWarning } from "../hooks/advertenciaCambiosNoGuardados";
@@ -267,7 +267,7 @@ const NutritionPage = () => {
                     )}
 
                     {tienePermiso('meriendas') && (
-                        <PatienteMeriendas
+                        <PacienteMeriendas
                             expediente={paciente.id}
                             nombrePaciente={paciente.name}
                             edad={paciente.category!}
@@ -291,7 +291,7 @@ const NutritionPage = () => {
                         <Dropdown
                             options={tiposDocumentos?.map((item) => ({
                                 value: item.id.toString(),
-                                label: item.Valor
+                                label: item.valor
                             })) || []}
                             value={formulario.idTipoDocumento.toString()}
                             onChange={(val) => actualizarCampo('idTipoDocumento', Number(val))}

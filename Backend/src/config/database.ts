@@ -45,7 +45,7 @@ class ConexionBD {
       this.poolconexiones = pool;
     } catch (err) {
       if (process.env.NODE_ENV === 'development') {
-        console.error('Error al obtener pool:', err);
+        console.error(err);
       }
       throw err;
     }

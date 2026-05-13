@@ -7,7 +7,7 @@
 */
 import { z } from 'zod';
 import type { OrdenBase, DetalleOrden, ValorCatalogo, PacienteOmitido } from "@miapp/shared";
-
+import { getEstadoById } from '../utils/funcionesFormatear';
 
 export const pacientesSala = z.object({
     sala: z.string({ required_error: "La sala es obligatoria" }),
@@ -104,9 +104,12 @@ export interface OrdenDieta extends OrdenBase {
 }
 
 export function toOrdenDto(orden: any): OrdenDieta {
+    const estadoEncontrado = getEstadoById(orden.idEstado);
+
+    const estadoData = estadoEncontrado?.[1];
     return {
         id: orden.solicitud_id,
-        sala: orden.nombre_sala,
+        sala: orden.sala_nombre,
         fechaEntrega: orden.fechaEntrega,
         usuario: orden.creacion_usuario,
         fechaCreacion: orden.fecha_creacion,
@@ -114,7 +117,9 @@ export function toOrdenDto(orden: any): OrdenDieta {
         estado: orden.estado,
         idTiempoComida: orden.idTiempoComida,
         idEstado: orden.idEstado,
-        detalles: orden,
+        detalles: orden.detalles,
+        tabla: estadoData?.tabla ?? "entrega",
+        code: estadoData?.label ?? "Enviada a Cocina",
     };
 }
 

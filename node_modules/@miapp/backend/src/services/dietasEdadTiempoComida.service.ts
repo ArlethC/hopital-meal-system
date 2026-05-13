@@ -210,7 +210,7 @@ export async function crear(data: { idDietas: { codigo: number, abrevDieta: stri
 
   const nuevosRegistros = dietasParaInsertar.map(d => ({
     idDieta: d.codigo,
-    abreviatura: d.abrevDieta ?? null,
+    abrevDieta: d.abrevDieta ?? null,
     idTiempoComida: data.idTiempoComida,
     idRangoEdad: data.idRangoEdad,
     usuarioCreacion: usuario,

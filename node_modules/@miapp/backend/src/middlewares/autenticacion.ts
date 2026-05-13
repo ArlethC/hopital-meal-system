@@ -27,15 +27,15 @@ export const mapaPermisos: Record<number, string> = {
   9: 'solicitud extraordinaria',
 };
 
-function obtenerPermisosComoMapa(permisosBd: { IdNodo: number }[]): Record<string, true> {
+function obtenerPermisosComoMapa(permisosBd: { permiso_usuario: number }[]): Record<string, true> {
   const permisos: Record<string, true> = {};
 
-  for (const { IdNodo } of permisosBd) {
-    const nombre = mapaPermisos[IdNodo];
+  for (const { permiso_usuario } of permisosBd) {
+    const nombre = mapaPermisos[permiso_usuario];
     if (nombre) {
       permisos[nombre] = true;
     } else {
-      console.warn(`IdNodo ${IdNodo} no está definido en el mapa de permisos`);
+      console.warn(`IdNodo ${permiso_usuario} no está definido en el mapa de permisos`);
     }
   }
 
@@ -47,7 +47,7 @@ interface TokenPayload {
   permisos: Record<string, true>;
 }
 
-export function generarTOKEN(usuario: string, permisosBd: { IdNodo: number }[]): { token: string; refreshToken: string; permisos: Record<string, true> } {
+export function generarTOKEN(usuario: string, permisosBd: { permiso_usuario: number }[]): { token: string; refreshToken: string; permisos: Record<string, true> } {
   const permisos = obtenerPermisosComoMapa(permisosBd);
 
   const payload: TokenPayload = {

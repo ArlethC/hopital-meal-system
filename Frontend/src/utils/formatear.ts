@@ -112,12 +112,12 @@ export type EstadoTabla =
   | 'cerrar';
 
 const ESTADOS_MAP: Record<number, { solicitud: EstadoSolicitud; tabla: EstadoTabla }> = {
-  5958: { solicitud: 'Enviada a Cocina', tabla: 'entrega' },
-  5959: { solicitud: 'Modificada y Enviada a Cocina', tabla: 'entrega' },
-  5960: { solicitud: 'Enviada a Sala', tabla: 'entrega' },
-  5961: { solicitud: 'Recibida en Sala', tabla: 'reclamo' },
-  5962: { solicitud: 'Recibida en Sala con Reclamo', tabla: 'reclamo' },
-  5963: { solicitud: 'Cerrada', tabla: 'cerrar' },
+  8: { solicitud: 'Enviada a Cocina', tabla: 'entrega' },
+  9: { solicitud: 'Modificada y Enviada a Cocina', tabla: 'entrega' },
+  10: { solicitud: 'Enviada a Sala', tabla: 'entrega' },
+  11: { solicitud: 'Recibida en Sala', tabla: 'reclamo' },
+  12: { solicitud: 'Recibida en Sala con Reclamo', tabla: 'reclamo' },
+  13: { solicitud: 'Cerrada', tabla: 'cerrar' },
   5965: { solicitud: 'Cerrada con Reclamo', tabla: 'cerrar' },
 };
 
@@ -143,7 +143,7 @@ export function mapOrdenDietaToCard(orden: OrdenDieta): SolicitudCard {
     usuario: orden.usuario,
     fechaCreacion: orden.fechaCreacion,
     tiempoComida: orden.tiempoComida,
-    estado: getEstadoUIById(orden.idEstado).solicitud,
+    estado: orden.code,
   };
 }
 

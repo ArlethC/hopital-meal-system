@@ -62,7 +62,7 @@ export const CrearDocumentoShema = z.object({
 export function toDocumentoDto(doc: any): Documento {
   return {
     idDocumento: doc.idDocumento,
-    tipoDocumento: doc.valor,
+    tipoDocumento: doc.v_valor_catalogo,
     rutaDocumento: doc.rutaDocumento,
     fechaInicial: doc.fechaInicial,
     fechaFinalVigencia: doc.fechaFinalVigencia,

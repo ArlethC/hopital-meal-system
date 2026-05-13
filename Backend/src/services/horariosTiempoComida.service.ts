@@ -13,11 +13,13 @@ import { registrarHistorial, TipoOperacion, Cambio } from "./historial.service";
 import { cerrarSolicitudesPorTiempo } from './solicitudDietas.service';
 import type { HorarioTiempoComida } from "@miapp/shared";
 import { CATALOGO_COMIDA } from "../config/Constantes";
+import { toHorarioDto } from '../dtos/horariosTiempoComida.dto';
 
 const repo = OrigenDatos.getRepository(HorariosTiempoComida);
 const repo2 = OrigenDatos.getRepository(ValorCatalogoMedico);
 
 async function existeDuplicado(tiempoComida: number) {
+
     const response = await repo.findOne({
         where: {
             idTiempoComida: tiempoComida,
@@ -74,19 +76,19 @@ export async function crear(data: Partial<HorariosTiempoComida>, usuario: string
 export async function obtenerById(id: number): Promise<HorarioTiempoComida[]> {
 
     const registro = await repo.createQueryBuilder('e')
-        .innerJoin('e.ValorCatalogo', 'v')
+        .innerJoin('e.ValorCatalogoMedico', 'v')
         .select([
-            'e.id AS id',
-            'v.valor AS tiempoComida',
-            'CAST(e.hora_limite_cierre AS varchar) AS horaCierre',
-            'CAST(e.horaModificacion AS varchar) AS horaModificacion'
+            'e.id_horario_comida',
+            'v.valor',
+            'CONVERT(VARCHAR(5), e.horaCierre, 108) AS horaCierre',
+            'CONVERT(VARCHAR(5), e.horaModificacion, 108) AS horaModificacion'
         ])
         .where('e.id = :id', { id: id })
         .andWhere('v.objCatalogoID = :idCatalogo', { idCatalogo: CATALOGO_COMIDA })
         .andWhere('e.activo = :activo', { activo: 1 })
         .getRawMany();
 
-    return registro;
+    return registro.map(toHorarioDto);
 }
 
 const mapeoCamposBD: Record<string, string> = {
@@ -139,7 +141,7 @@ export async function modificar(id: number, data: Partial<HorariosTiempoComida>,
         ipUsuario: ipUsuario,
     });
 
-    if(data.horaCierre != null){
+    if (data.horaCierre != null) {
         programarCierres();
     }
 
@@ -168,17 +170,18 @@ export async function desactivar(id: number, usuario: string, ipUsuario: string)
 export async function obtenertodos(): Promise<HorarioTiempoComida[]> {
 
     const registros = await repo.createQueryBuilder('e')
-        .innerJoin('e.ValorCatalogo', 'v')
+        .innerJoin('e.ValorCatalogoMedico', 'v')
         .select([
-            'e.id AS id',
-            'v.valor AS tiempoComida',
-            'CAST(e.horaCierre AS varchar) AS horaCierre',
-            'CAST(e.horaModificacion AS varchar) AS horaModificacion'
+            'e.id_horario_comida',
+            'v.valor',
+            'CONVERT(VARCHAR(5), e.horaCierre, 108) AS horaCierre',
+            'CONVERT(VARCHAR(5), e.horaModificacion, 108) AS horaModificacion'
         ])
-        .andWhere('v.objCatalogoID = :idCatalogo', { idCatalogo: CATALOGO_COMIDA })
-        .andWhere('e.activo = :activo', { activo: 1 })
+        .where('v.objCatalogoID = :idCatalogo', { idCatalogo: CATALOGO_COMIDA })
+        .andWhere('e.activo = :activo', { activo: true })
         .getRawMany();
-    return registros;
+
+    return registros.map(toHorarioDto);
 }
 
 
@@ -231,7 +234,7 @@ export async function validarHorario(idTiempoComida: number, accion = 'modificac
 
 export async function programarCierres() {
     const horarios = await repo.query(`
-    SELECT id_tiempo_comida, CAST(hora_final_cierre AS varchar) AS hora_final_cierre
+    SELECT id_comida, CAST(hora_final_cierre AS varchar) AS hora_final_cierre
     FROM Horario_comida
     WHERE activo = 1
   `);

@@ -51,8 +51,8 @@ export class DocumentoNutricion {
     ipUsuarioCreacion?: string;
 
     @ManyToOne(() => ValorCatalogoMedico)
-    @JoinColumn({ name: 'tipo_documento_id', referencedColumnName: 'valor' })
-    valor?: ValorCatalogoMedico;
+    @JoinColumn({ name: 'tipo_documento_id' })
+    ValorCatalogoMedico!: ValorCatalogoMedico;
 }
 
 export { ValorCatalogoMedico };

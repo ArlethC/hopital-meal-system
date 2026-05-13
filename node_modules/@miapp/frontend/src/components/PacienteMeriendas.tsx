@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import { Plus, Trash } from 'react-feather';
 import { obtenerMeriendas, crearMerienda, type DatosMerienda, dietasMerienda, desactivarMerienda } from '../services/meriendas';
 import { fetchTiemposComida } from '../utils/fecthDatos';
+import { type ValorCatalogo } from '../types/ui';
 import { formatearNombre, } from "../utils/formatear";
 import { validarCamposGenerico, ValidarFecha } from "../utils/validaciones";
 import { useAuth } from '../hooks/Auth';
@@ -18,7 +19,7 @@ import Dropdown from './Dropdown';
 import Pagination from './Pagination';
 import ConfirmDialog from "../components/ConfimModal";
 
-interface PatienteMeriendasProps {
+interface PacienteMeriendasProps {
     expediente: string;
     nombrePaciente: string;
     edad: string;
@@ -26,18 +27,18 @@ interface PatienteMeriendasProps {
     setHasUnsavedChanges: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const PatienteMeriendas = ({ 
+export const PacienteMeriendas = ({ 
     expediente, 
     nombrePaciente,
     edad,
     hasUnsavedChanges,
     setHasUnsavedChanges,
-}: PatienteMeriendasProps) => {
+}: PacienteMeriendasProps) => {
     const { tienePermiso } = useAuth();
     const { notify } = useNotifications();
 
     const [meriendas, setMeriendas] = useState<any[]>([]);
-    const [tiemposComida, setTiemposComida] = useState<any[]>([]);
+    const [tiemposComida, setTiemposComida] = useState<ValorCatalogo[]>([]);
     const [dietas, setDietas] = useState<any[]>([]);
     const [filtro, setFiltro] = useState<'activas' | 'historial'>('activas');
     const [showModal, setShowModal] = useState(false);
@@ -110,7 +111,7 @@ export const PatienteMeriendas = ({
     const handleSave = async () => {
         const resultado = validarCamposGenerico({
             expediente: { valor: expediente, tipo: 'string', requerido: true, },
-            idDieta: { valor: formData.idDieta, tipo: 'string', requerido: true, nombreCampo: "Dieta" },
+            idDieta: { valor: formData.idDieta, tipo: 'number', requerido: true, min: 1, nombreCampo: "Dieta" },
             idTiempoComida: { valor: formData.idTiempoComida, tipo: 'number', requerido: true, min: 1, nombreCampo: "Tiempo de comida" },
             fechaInicioMerienda: { valor: formData.fechaInicioMerienda, tipo: 'string', requerido: true, nombreCampo: "Fecha inicial" },
             fechaFinMerienda: { valor: formData.fechaFinMerienda, tipo: 'string', requerido: false, nombreCampo: "Fecha final de vigencia" },
@@ -332,10 +333,10 @@ export const PatienteMeriendas = ({
                         </label>
                         <Dropdown
                             options={tiemposComida
-                                .filter(item => item.id === 5957 || item.id === 5956)
+                                .filter(item => item.valor?.toLowerCase().startsWith('merienda'))
                                 .map(item => ({
                                     value: item.id.toString(),
-                                    label: item.Valor
+                                    label: item.valor
                                 }))}
                             value={formData.idTiempoComida}
                             placeholder="Seleccione tiempo de comida"

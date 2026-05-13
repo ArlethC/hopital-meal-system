@@ -6,7 +6,7 @@
     Version: 1.0.0
 */
 
-import type { DetalleOrden } from "@miapp/shared";
+import type { DetalleOrden, Historial } from "@miapp/shared";
 import { formatearEdad } from "../utils/funcionesFormatear";
 
 export function toDetalleOrdentDto(detalle: any): DetalleOrden {
@@ -15,7 +15,7 @@ export function toDetalleOrdentDto(detalle: any): DetalleOrden {
         cama: detalle.cama_nombre,
         nombre: detalle.nombre_paciente,
         expediente: detalle.id_paciente,
-        edad: detalle.Edad,
+        edad: detalle.edad,
         dieta: {
             codigo: detalle.id_dieta_vigente,
             nombre: detalle.descripcion,
@@ -30,7 +30,20 @@ export function toDetalleOrdentDto(detalle: any): DetalleOrden {
         reclamo: detalle.reclamo,
         modificado: detalle.modificado,
         edificio: detalle.edificio,
-        edadTexto: formatearEdad(detalle.edadTexto),
+        edadTexto: formatearEdad(detalle.edad),
         dietasValidas: detalle.dietasValidas,
     }
 }
+
+export function toHistorialDto(historial: any): Historial {
+    return {
+        campoModificado: historial.columna_modificada,
+        valorAnterior: historial.valor_anterior,
+        valorNuevo: historial.valor_nuevo,
+        fechaCambio: historial.cambio_fecha,
+        usuarioCambio: historial.cambio_usuario,
+    }
+}
+
+
+

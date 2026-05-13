@@ -6,13 +6,13 @@
     Version: 1.0.0
 */
 import { Calendar, Clock, CheckCircle, User, Home, Send, Edit, ArrowRightCircle, Lock, FileText, AlertCircle } from 'react-feather';
-import { fechaATexto, type EstadoSolicitud } from "../utils/formatear";
+import { fechaATexto } from "../utils/formatear";
 import Pagination from '../components/Pagination';
 
 
 export interface SolicitudCard {
   id: number;
-  estado: EstadoSolicitud;
+  estado: string;
   sala: string;
   fechaEntrega: string;
   usuario: string;

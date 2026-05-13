@@ -6,7 +6,14 @@
     Version: 3.0.2
 */
 
-import {  ESTADOS_DETALLE, TIEMPOS_COMIDA } from '../config/Constantes';
+import {  ESTADOS_DETALLE, TIEMPOS_COMIDA, ESTADOS_SOLICITUD } from '../config/Constantes';
+
+
+export function getEstadoById(idEstado: number) {
+  return Object.entries(ESTADOS_SOLICITUD).find(
+    ([_, value]) => value.id === idEstado
+  );
+}
 
 export function convertirAMeses(valor: number, unidad: "meses" | "años"): number {
   if (unidad === "años") return valor * 12;
@@ -39,7 +46,7 @@ export function formatearEdadPDF(meses: number) {
   return `${años} a y ${restoMeses} m`;
 }
 
-export function convertirHoraA_HHmm(hora: string): string {
+export function convertirHoraAHHmm(hora: string): string {
   if (!hora || hora.length < 5) return "";
   return hora.slice(0, 5);
 }
@@ -108,25 +115,25 @@ export type NotificacionBD = {
   operacion: string;
   valor_anterior: string;
   nuevo_valor: string;
-  nombre_sala: string;
+  sala_nombre: string;
   nombre_paciente: string;
 };
 
 export function formatearNotificacion(notif: NotificacionBD): string {
   if (notif.operacion === 'crear_reclamo') {
-    return `Se creó un reclamo para ${formatearNombre(notif.nombre_paciente)} en ${notif.nombre_sala}`;
+    return `Se creó un reclamo para ${formatearNombre(notif.nombre_paciente)} en ${notif.sala_nombre}`;
   }
 
   if (notif.operacion === 'cancelar_reactivar') {
     const tipoOperacion = notif.nuevo_valor === ESTADOS_DETALLE.CANCELADA.toString() ? 'Cancelada': 'Reactivada';
-    return `La dieta de ${formatearNombre(notif.nombre_paciente)} fue ${tipoOperacion} en ${notif.nombre_sala}`;
+    return `La dieta de ${formatearNombre(notif.nombre_paciente)} fue ${tipoOperacion} en ${notif.sala_nombre}`;
   }
 
   if(notif.operacion === 'modificar' && notif.columna_modificada === 'id_ARTICULO_vigente'){
-    return `La dieta de ${formatearNombre(notif.nombre_paciente)} fue modificada de "${notif.valor_anterior}" a "${notif.nuevo_valor}" en ${notif.nombre_sala}`;
+    return `La dieta de ${formatearNombre(notif.nombre_paciente)} fue modificada de "${notif.valor_anterior}" a "${notif.nuevo_valor}" en ${notif.sala_nombre}`;
   }
 
-  return `El campo "Observación nutricional" de ${formatearNombre(notif.nombre_paciente)} fue modificado en ${notif.nombre_sala}`;
+  return `El campo "Observación nutricional" de ${formatearNombre(notif.nombre_paciente)} fue modificado en ${notif.sala_nombre}`;
 }
 
 type ReclamoBD = {
@@ -141,9 +148,9 @@ export function formatearReclamos(reclamos: ReclamoBD[]) {
                 .filter((r) => r.tiempoComida === TIEMPOS_COMIDA.DESAYUNO)
                 .reduce((acc, r) => acc + (r.totalReclamo || 0), 0)
         },
-        { Valor: 'Almuerzo', totalReclamo: reclamos.filter((r) => r.tiempoComida === TIEMPOS_COMIDA.ALMUERZO).reduce((acc, r) => acc + (r.totalReclamo || 0), 0) },
-        { Valor: 'Cena', totalReclamo: reclamos.filter((r) => r.tiempoComida === TIEMPOS_COMIDA.CENA).reduce((acc, r) => acc + (r.totalReclamo || 0), 0) },
-        { Valor: 'Merienda pm', totalReclamo: reclamos.filter((r) => r.tiempoComida === TIEMPOS_COMIDA.MERIENDA_PM).reduce((acc, r) => acc + (r.totalReclamo || 0), 0) },
-        { Valor: 'Merienda am', totalReclamo: reclamos.filter((r) => r.tiempoComida === TIEMPOS_COMIDA.MERIENDA_AM).reduce((acc, r) => acc + (r.totalReclamo || 0), 0) }
+        { valor: 'Almuerzo', totalReclamo: reclamos.filter((r) => r.tiempoComida === TIEMPOS_COMIDA.ALMUERZO).reduce((acc, r) => acc + (r.totalReclamo || 0), 0) },
+        { valor: 'Cena', totalReclamo: reclamos.filter((r) => r.tiempoComida === TIEMPOS_COMIDA.CENA).reduce((acc, r) => acc + (r.totalReclamo || 0), 0) },
+        { valor: 'Merienda pm', totalReclamo: reclamos.filter((r) => r.tiempoComida === TIEMPOS_COMIDA.MERIENDA_PM).reduce((acc, r) => acc + (r.totalReclamo || 0), 0) },
+        { valor: 'Merienda am', totalReclamo: reclamos.filter((r) => r.tiempoComida === TIEMPOS_COMIDA.MERIENDA_AM).reduce((acc, r) => acc + (r.totalReclamo || 0), 0) }
     ]
 }

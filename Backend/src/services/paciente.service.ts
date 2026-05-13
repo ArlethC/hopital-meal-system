@@ -21,7 +21,7 @@ export async function obtenerPacientes(limite: number, offset: number, valorBusq
         `
     SELECT c.id_paciente, c.nombre_paciente, dbo.CalcularEdad(c.fecha_nacimiento) AS edad
     FROM Pacientes c 
-    `;
+    WHERE `;
 
     const parametros: { nombre: string; valor: string | number }[] = [
         { nombre: 'offset', valor: offset },
@@ -35,9 +35,9 @@ export async function obtenerPacientes(limite: number, offset: number, valorBusq
 
     if (valorBusqueda.trim() !== '') {
         if (validarExpediente(valorBusqueda)) {
-            busqueda = ` AND c.id_paciente LIKE @busqueda`;
+            busqueda = `c.id_paciente LIKE @busqueda`;
         } else {
-            busqueda = ` AND c.nombre_paciente LIKE @busqueda`;
+            busqueda = `c.nombre_paciente LIKE @busqueda`;
         }
 
         parametros.push({ nombre: 'busqueda', valor: `%${valorBusqueda.trim()}%` });
@@ -54,7 +54,7 @@ export async function obtenerPacientes(limite: number, offset: number, valorBusq
         `
     SELECT COUNT(*) AS total
     FROM Pacientes c
-    `;
+    WHERE `;
 
     query2 += busqueda;
 
@@ -158,7 +158,7 @@ export async function obtenerPacientesXSala(sala: string, fecha: string, idTiemp
         paciente.asignado = existentesSet.has(paciente.Expediente);
     }
 
-    const resultado = await asignarDietasValidasEdad(pacientes.recordset, idTiempoComida)
+    const resultado = await asignarDietasValidasEdad(pacientes.recordset, idTiempoComida);
 
     return resultado.map(toPacienteListDto);
 }
@@ -220,7 +220,7 @@ export async function obtenerInfoPacienteEtiqueta(idDetalleSolicitud: number) {
         throw new HttpError("El detalle de la solictud no existe", 404);
     }
 
-    const query = `SELECT cl.nombre_paciente AS paciente, dbo.CalcularEdad(Convert(Datetime, cl.fecha_nacimiento, 112)) AS edad, d.descripcion, dtc.abrev_nombre_articulo AS abrev, sol.sala_nombre AS sala
+    const query = `SELECT cl.nombre_paciente AS paciente, dbo.CalcularEdad(cl.fecha_nacimiento) AS edad, d.descripcion, dtc.abrev_nombre_dieta AS abrev, sol.sala_nombre AS sala
     FROM Detalles_solicitud_dietas det
     INNER JOIN Solicitud_dietas sol ON sol.solicitud_id = det.solicitud_id
     INNER JOIN Pacientes cl ON cl.id_paciente = det.id_paciente

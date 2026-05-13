@@ -45,7 +45,6 @@ const DietaEdadTiempoForm: React.FC<FormProps> = ({
 
     const handleSave = async () => {
         const resultado = validarCamposGenerico({
-            idDieta: { valor: dieta, tipo: 'number', requerido: true, nombreCampo: "Dieta" },
             idTiempoComida: { valor: tiempoComida, tipo: 'number', requerido: true, min: 1, nombreCampo: "Tiempo de comida" },
             idRangoEdad: { valor: rangoEdad, tipo: 'number', requerido: true, nombreCampo: "Rango de edad" },
             abrevDieta: { valor: abrevDieta, tipo: 'string', requerido: false, nombreCampo: "Abreviatura de la dieta" }

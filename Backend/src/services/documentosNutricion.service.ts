@@ -55,7 +55,7 @@ export async function crearDocumentoNutricion({
 export async function obtenerDocumentoId(idDocumento: number): Promise<Documento[]> {
     const registro = await repo
         .createQueryBuilder("doc")
-        .innerJoin("doc.idTipoDocumento", "c")
+        .innerJoin("doc.ValorCatalogoMedico", "c")
         .select([
             "doc.idDocumento",
             "c.valor",
@@ -109,7 +109,7 @@ export async function obtenerDocumentosPaciente(expediente: string, limite: numb
 
     const total = await repo
         .createQueryBuilder('doc')
-        .innerJoin('doc.ValorCatalogo', 'v')
+        .innerJoin('doc.ValorCatalogoMedico', 'v')
         .where('doc.activo = :activo', whereParams)
         .andWhere('doc.expediente = :expediente', whereParams)
         .andWhere('(doc.fechaFinalVigencia IS NULL OR doc.fechaFinalVigencia >= :hoy)', whereParams)
@@ -117,7 +117,7 @@ export async function obtenerDocumentosPaciente(expediente: string, limite: numb
 
     const data = await repo
         .createQueryBuilder('doc')
-        .innerJoin('doc.ValorCatalogo', 'v')
+        .innerJoin('doc.ValorCatalogoMedico', 'v')
         .where('doc.activo = :activo', whereParams)
         .andWhere('doc.expediente = :expediente', whereParams)
         .andWhere('(doc.fechaFinalVigencia IS NULL OR doc.fechaFinalVigencia >= :hoy)', whereParams)

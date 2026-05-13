@@ -75,7 +75,6 @@ export const fetchPacientes = async (query: string, page = 1): Promise<{ items: 
         if (import.meta.env.DEV) {
             console.error("Error al obtener pacientes:", error);
         }
-        console.error("Error al obtener pacientes");
         return {
             items: [],
             hasMore: false

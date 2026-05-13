@@ -135,7 +135,7 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogout, onNavigate }) => {
             <div className="px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-16">
                     <img
-                        src="/logo.jpg"
+                        src="/logo.png"
                         alt="logo"
                         className="h-10 max-w-[150px] object-contain"
                         width="400" height="300"

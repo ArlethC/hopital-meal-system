@@ -10,7 +10,6 @@ import type {
    RespuestaEntregaDietas,
    PacienteOmitido,
    RespuestaOrdenes,
-   Historial,
    DatosFiltroSolicitud,
    IdDetallesPayload,
    OrdenDieta,
@@ -37,10 +36,7 @@ export async function obtenerSolicitud(id: string): Promise<OrdenDieta> {
     return response.data;
 }
 
-export async function obtenerHistorialDetalle(id: string): Promise<Historial[]> {
-    const response = await api.get<Historial[]>(`/api/solicitudDietas/detalles/historial/${id}`);
-    return response.data;
-}
+
 
 export async function obtenerSolicitudesRecibido(data: DatosFiltroSolicitud, params: string): Promise<RespuestaOrdenes> {
     const response = await api.post<RespuestaOrdenes>(`/api/solicitudDietas/recibir?${params}`, data);

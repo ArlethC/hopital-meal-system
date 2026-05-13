@@ -7,7 +7,7 @@
 */
 import { Router } from 'express';
 const router = Router();
-import {modificarDietasObs, modificarNutricion, modificarCocina, obtenerDetallesSolicitudParaModificar, cancelarDieta, reactivarDieta, detallesSolicitud  } from '../controllers/detallesSolicitud.controllers';
+import {modificarDietasObs, modificarNutricion, modificarCocina, obtenerDetallesSolicitudParaModificar, cancelarDieta, reactivarDieta, detallesSolicitud, obtenerHistorialController  } from '../controllers/detallesSolicitud.controllers';
 import { verificarPermisos, verificarSesion } from '../middlewares/autenticacion';
 import { validarBody, validarIdParam } from '../middlewares/validaciones';
 import { modificacionEnfermeriaShema, modificacionNutricionShema, modificacionCocinaShema } from '../dtos/solictudDietas.dto';
@@ -25,5 +25,8 @@ router.delete('/cancelar/:id', verificarPermisos(['crear solicitud']), validarId
 router.patch('/reactivar/:id', verificarPermisos(['crear solicitud']), validarIdParam, reactivarDieta); //
 
 router.get('/todos/:id', verificarSesion, validarIdParam, detallesSolicitud); //
+
+router.get('/historial/:id', verificarSesion, validarIdParam, obtenerHistorialController);
+
 
 export default router;

@@ -12,7 +12,7 @@ export class AlergiasIntoleranciasPaciente {
   @PrimaryGeneratedColumn({ name: 'alergia_intolerancia_id' })
   id!: number;
 
-  @Column({ name: 'expediente', type: 'varchar', length: 20 })
+  @Column({ name: 'id_paciente', type: 'varchar', length: 20 })
   expediente!: string;
 
   @Column({ name: 'intolerancia_alergia', type: 'nvarchar', length: 255 })

@@ -10,7 +10,7 @@ import {ValorCatalogoMedico} from './ValorCatalogoAtencionMedica';
 
 @Entity({ name: 'Detalle_merienda' })
 export class DetallesMerienda {
-    @PrimaryGeneratedColumn({ name: 'detalle_merienda_id' })
+    @PrimaryGeneratedColumn({ name: 'merienda_detalle_id'  })
     idDetalleMerienda!: number;
 
     @Column({ name: 'id_paciente', type: 'varchar', length: 20, nullable: false })
@@ -44,6 +44,6 @@ export class DetallesMerienda {
     ipUsuarioCreacion!: string | null;
 
     @ManyToOne(() => ValorCatalogoMedico)
-    @JoinColumn({ name: 'id_comida', referencedColumnName: 'valor' })
-    valor?: ValorCatalogoMedico;
+    @JoinColumn({ name: 'id_comida' })
+    ValorCatalogoMedico!: ValorCatalogoMedico;
 }

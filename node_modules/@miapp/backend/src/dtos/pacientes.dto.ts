@@ -5,7 +5,7 @@ export function toPacienteDto(paciente: any): Paciente {
     return {
         expediente: paciente.id_paciente,
         nombre: paciente.nombre_paciente,
-        edad: paciente.edad,
+        edad: formatearEdad(paciente.edad),
     };
 }
 

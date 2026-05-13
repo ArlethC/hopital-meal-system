@@ -6,6 +6,9 @@
     Version: 1.0.0
 */
 import { z } from "zod";
+import type { HorarioTiempoComida } from '@miapp/shared';
+import { convertirHoraAHHmm } from '../utils/funcionesFormatear';
+
 
 export const CrearTiempoComidaHorarioShema = z.object({
     idTiempoComida: z.number({ required_error: "El tiempo de comida es obligatorio" })
@@ -35,3 +38,11 @@ export const ModificarTiempoComidaHorarioShema = z.object({
     }).optional(),
 });
 
+export function toHorarioDto(horario: any): HorarioTiempoComida {
+  return {
+    id: horario.id_horario_comida,
+    tiempoComida: horario.v_valor_catalogo,
+    horaCierre: convertirHoraAHHmm(horario.horaCierre),
+    horaModificacion: convertirHoraAHHmm(horario.horaModificacion),
+  };
+}

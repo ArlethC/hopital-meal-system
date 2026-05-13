@@ -6,7 +6,7 @@
     Version: 1.0.1
 */
 import type { Salas } from '../types/ui';
-import type { DetalleOrden, OrdenBase, PacienteOmitido } from "@miapp/shared";
+import type { DetalleOrden, OrdenBase, PacienteOmitido, Historial } from "@miapp/shared";
 
 
 //Datos de entrada de la api
@@ -73,14 +73,6 @@ interface RespuestaOrdenes {
   paginaActual: number;
   totalPaginas: number;
   datos: OrdenDieta[];
-}
-
-interface Historial {
-  campo_modificado: string;
-  valor_anterior: string;
-  valor_nuevo: string;
-  fecha_cambio: string;
-  usuario_cambio: string;
 }
 
 

@@ -14,13 +14,13 @@ type TotalDietas = {
 }
 
 type Alergias = {
-    Paciente: string;
-    Observacion: string;
+    paciente: string;
+    observacion: string;
 }
 
 type Reclamo = {
     totalReclamo: number;
-    Valor: string;
+    valor: string;
 }
 
 export type ResumenResponse = {

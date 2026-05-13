@@ -96,15 +96,15 @@ AND sol.fecha_entrega = CAST(GETDATE() AS DATE)`,
 
             if (todosRecibidosOReclamo && hayRecibido) {
                 if (hayReclamo) {
-                    nuevoEstadoSolicitud = ESTADOS_SOLICITUD.R_RECLAMO;
+                    nuevoEstadoSolicitud = ESTADOS_SOLICITUD.R_RECLAMO.id;
                 } else {
-                    nuevoEstadoSolicitud = ESTADOS_SOLICITUD.RECIBIDA;
+                    nuevoEstadoSolicitud = ESTADOS_SOLICITUD.RECIBIDA.id;
                 }
             }
 
             //cambiar el estado si ya estaba en RECIBIDA y ahora hay reclamo
-            if (nuevoEstadoSolicitud === ESTADOS_SOLICITUD.RECIBIDA && hayReclamo) {
-                nuevoEstadoSolicitud = ESTADOS_SOLICITUD.R_RECLAMO;
+            if (nuevoEstadoSolicitud === ESTADOS_SOLICITUD.RECIBIDA.id && hayReclamo) {
+                nuevoEstadoSolicitud = ESTADOS_SOLICITUD.R_RECLAMO.id;
             }
 
             await tx.request()
@@ -190,12 +190,12 @@ export async function crearReclamo(idDetalle: number, usuario: string, usuarioIP
     })
 
     //Enviar el correo de notificacion
-    const datos = await bd.consultaBD(`SELECT sol.nombre_sala, CONVERT(VARCHAR(10), fecha_entrega, 120) AS fechaEntrega, tc.valor_catalogo AS tiempoComida, cl.nombre_paciente, cl.id_paciente, dieta.descripcion, cat.valor_catalogo AS reclamo, det.obs_reclamo
+    const datos = await bd.consultaBD(`SELECT sol.sala_nombre, CONVERT(VARCHAR(10), fecha_entrega, 120) AS fechaEntrega, tc.valor_catalogo AS tiempoComida, cl.nombre_paciente, cl.id_paciente, dieta.descripcion, cat.valor_catalogo AS reclamo, det.obs_reclamo
 FROM Solicitud_dietas sol 
 INNER JOIN Detalles_solicitud_dietas det ON sol.solicitud_id = det.solicitud_id
 INNER JOIN Pacientes cl ON cl.id_paciente = det.id_paciente
 INNER JOIN Valores_catalogo_medico cat ON cat.id_valor_catalogo = det.reclamo_tipo_id
-INNER JOIN Dietas dieta ON dieta.dieta = det.id_dieta_vigente
+INNER JOIN Dietas dieta ON dieta.id_dieta = det.id_dieta_vigente
 INNER JOIN Valores_catalogo_medico tc ON tc.id_valor_catalogo = sol.id_comida
 WHERE cat.id_catalogo = 1 AND tc.id_catalogo = 3 AND det.detalle_id = @idDetalle`, [
         { nombre: 'idDetalle', valor: idDetalle },
@@ -222,7 +222,7 @@ WHERE cat.id_catalogo = 1 AND tc.id_catalogo = 3 AND det.detalle_id = @idDetalle
   <div class="detalle">
     <p><strong>Información del reclamo:</strong></p>
     <ul>
-      <li><strong>Sala:</strong> ${informacion.nombre_sala}</li>
+      <li><strong>Sala:</strong> ${informacion.sala_nombre}</li>
       <li><strong>Tiempo de comida:</strong> ${informacion.tiempoComida}</li>
       <li><strong>Fecha de entrega:</strong> ${fechaATexto(informacion.fechaEntrega)}</li>
       <li><strong>Paciente:</strong> ${informacion.id_paciente} - ${informacion.nombre_paciente}</li>
@@ -260,10 +260,10 @@ async function verificarEstadoReclamo(idDetalle: number) {
     AND s.fecha_entrega = CAST(GETDATE() AS DATE)`, [
         { nombre: 'idDetalle', valor: idDetalle },
         { nombre: 'estado', valor: ESTADO_RECLAMO.REPORTADO },
-        { nombre: 'd1', valor: ESTADOS_SOLICITUD.RECIBIDA },
-        { nombre: 'd2', valor: ESTADOS_SOLICITUD.R_RECLAMO },
-        { nombre: 'd3', valor: ESTADOS_SOLICITUD.ENVIADA_SALA },
-        { nombre: 'd4', valor: ESTADOS_SOLICITUD.MODIFICADA },
+        { nombre: 'd1', valor: ESTADOS_SOLICITUD.RECIBIDA.id },
+        { nombre: 'd2', valor: ESTADOS_SOLICITUD.R_RECLAMO.id },
+        { nombre: 'd3', valor: ESTADOS_SOLICITUD.ENVIADA_SALA.id },
+        { nombre: 'd4', valor: ESTADOS_SOLICITUD.MODIFICADA.id },
     ]);
 
     if (estadoDetalle.recordset.length === 0) {
@@ -346,7 +346,7 @@ WHERE detalle_id = @idDetalle AND er.id_catalogo = 6 AND tipoR.id_catalogo = 1`,
         { nombre: 'idDetalle', valor: idDetalle },
     ]);
 
-    return reclamo.recordset[0].map(toReclamoDto);
+    return toReclamoDto(reclamo.recordset[0]);
 }
 
 export async function obtenerTiposReclamos() {

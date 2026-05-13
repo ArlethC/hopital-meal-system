@@ -141,8 +141,8 @@ const ScreenTV = () => {
                                 <span className="font-bold">
                                     {data?.reclamos
                                         ? data.reclamos
-                                            .filter((r) => r.Valor === item.valor)
-                                            .reduce((acc, r) => acc + (r.totalReclamo || 0), 0)
+                                            .filter((r) => r.valor === item.valor)
+                                            .reduce((acc, r) => acc + Number(r.totalReclamo ?? 0), 0)
                                         : 0}
                                 </span>
                             </div>
@@ -174,8 +174,8 @@ const ScreenTV = () => {
                     <div className={`flex-1 space-y-2 ${alergiasTextSize}`}>
                         {data?.alergias?.map((alergia, index) => (
                             <div key={index} className="flex justify-between">
-                                <span className="font-semibold">{formatearNombre(alergia.Paciente)}</span>
-                                <span className="text-gray-300 break-words whitespace-normal">{alergia.Observacion}</span>
+                                <span className="font-semibold">{formatearNombre(alergia.paciente)}</span>
+                                <span className="text-gray-300 break-words whitespace-normal">{alergia.observacion}</span>
                             </div>
                         ))}
                     </div>

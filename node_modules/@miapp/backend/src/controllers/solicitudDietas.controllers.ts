@@ -6,7 +6,7 @@
     Version: 3.0.2
 */
 import { Request, Response, NextFunction } from 'express';
-import { crearSolicitud, obtenersolicitudes, obtenerHistorial, marcarSolicitudRecibida, marcarSolicitudRecibidaParcial, estadosSolicitud } from '../services/solicitudDietas.service';
+import { crearSolicitud, obtenersolicitudes, marcarSolicitudRecibida, marcarSolicitudRecibidaParcial, estadosSolicitud } from '../services/solicitudDietas.service';
 import { obtenerDetallesSolicitud } from '../services/detallesSolicitud.service';
 import { validarYCompararFecha } from '../utils/validaciones';
 import { TIEMPOS_COMIDA, ESTADOS_SOLICITUD } from '../config/Constantes';
@@ -45,7 +45,7 @@ export async function obtenerSolicitudesParaModificar(req: Request, res: Respons
 
 
     const solicitudes = await obtenersolicitudes({
-      pag: Number(pag), limite: Number(limite), offset: Number(offset), sala: sala, idTiempoComida: Number(idTiempoComida), fechaEntrega: fecha, estados: [ESTADOS_SOLICITUD.ENVIADA_COCINA, ESTADOS_SOLICITUD.MODIFICADA]
+      pag: Number(pag), limite: Number(limite), offset: Number(offset), sala: sala, idTiempoComida: Number(idTiempoComida), fechaEntrega: fecha, estados: [ESTADOS_SOLICITUD.ENVIADA_COCINA.id, ESTADOS_SOLICITUD.MODIFICADA.id]
     });
 
     if (solicitudes.total === 0) {
@@ -70,22 +70,7 @@ export async function obtenerSolicitudesParaModificar(req: Request, res: Respons
   }
 }
 
-export async function obtenerHistorialController(req: Request, res: Response, next: NextFunction) {
-  try {
-    const { id } = req.params;
 
-    const historial = await obtenerHistorial(Number(id));
-
-    if (historial.length === 0) {
-      res.status(204).json({ message: "No existe historial de cambios para este detalle" });
-      return;
-    }
-    res.status(200).json(historial);
-
-  } catch (error) {
-    next(error);
-  }
-}
 
 export async function solicitudRecibida(req: Request, res: Response, next: NextFunction) {
   try {
@@ -124,7 +109,7 @@ export async function obtenerSolicitudesParaRecibir(req: Request, res: Response,
     const { limite, offset, pag } = req.paginacion ?? { limite: 10, offset: 0 };
 
     const solicitudes = await obtenersolicitudes({
-      pag: Number(pag), limite: Number(limite), offset: Number(offset), sala: sala, idTiempoComida: Number(idTiempoComida), fechaEntrega: fecha, estados: [ESTADOS_SOLICITUD.ENVIADA_SALA, ESTADOS_SOLICITUD.ENVIADA_COCINA, ESTADOS_SOLICITUD.MODIFICADA, ESTADOS_SOLICITUD.RECIBIDA, ESTADOS_SOLICITUD.R_RECLAMO],
+      pag: Number(pag), limite: Number(limite), offset: Number(offset), sala: sala, idTiempoComida: Number(idTiempoComida), fechaEntrega: fecha, estados: [ESTADOS_SOLICITUD.ENVIADA_SALA.id, ESTADOS_SOLICITUD.ENVIADA_COCINA.id, ESTADOS_SOLICITUD.MODIFICADA.id, ESTADOS_SOLICITUD.RECIBIDA.id, ESTADOS_SOLICITUD.R_RECLAMO.id],
     });
 
     if (solicitudes.total === 0) {
@@ -149,7 +134,7 @@ export async function obtenerSolicitudes(req: Request, res: Response, next: Next
     const { limite, offset, pag } = req.paginacion ?? { limite: 10, offset: 0 };
 
     const solicitudes = await obtenersolicitudes({
-      pag: Number(pag), limite: Number(limite), offset: Number(offset), sala: sala, idTiempoComida: Number(idTiempoComida), fechaEntrega: fecha, estados: [ESTADOS_SOLICITUD.CERRADA, ESTADOS_SOLICITUD.C_RECLAMO, ESTADOS_SOLICITUD.R_RECLAMO, ESTADOS_SOLICITUD.RECIBIDA],
+      pag: Number(pag), limite: Number(limite), offset: Number(offset), sala: sala, idTiempoComida: Number(idTiempoComida), fechaEntrega: fecha, estados: [ESTADOS_SOLICITUD.CERRADA.id, ESTADOS_SOLICITUD.C_RECLAMO.id, ESTADOS_SOLICITUD.R_RECLAMO.id, ESTADOS_SOLICITUD.RECIBIDA.id],
     });
 
     if (solicitudes.total === 0) {
@@ -174,7 +159,7 @@ export async function obtenerSolicitudesTodas(req: Request, res: Response, next:
     const { limite, offset, pag } = req.paginacion ?? { limite: 10, offset: 0 };
 
     const solicitudes = await obtenersolicitudes({
-      pag: Number(pag), limite: Number(limite), offset: Number(offset), sala: sala, idTiempoComida: Number(idTiempoComida), fechaEntrega: fecha, estados: [ESTADOS_SOLICITUD.CERRADA, ESTADOS_SOLICITUD.C_RECLAMO, ESTADOS_SOLICITUD.R_RECLAMO, ESTADOS_SOLICITUD.RECIBIDA, ESTADOS_SOLICITUD.ENVIADA_COCINA, ESTADOS_SOLICITUD.MODIFICADA, ESTADOS_SOLICITUD.ENVIADA_SALA], idEstado: idEstado
+      pag: Number(pag), limite: Number(limite), offset: Number(offset), sala: sala, idTiempoComida: Number(idTiempoComida), fechaEntrega: fecha, estados: [ESTADOS_SOLICITUD.CERRADA.id, ESTADOS_SOLICITUD.C_RECLAMO.id, ESTADOS_SOLICITUD.R_RECLAMO.id, ESTADOS_SOLICITUD.RECIBIDA.id, ESTADOS_SOLICITUD.ENVIADA_COCINA.id, ESTADOS_SOLICITUD.MODIFICADA.id, ESTADOS_SOLICITUD.ENVIADA_SALA.id], idEstado: idEstado
     });
 
     if (solicitudes.total === 0) {

@@ -24,13 +24,41 @@ export const ESTADO_RECLAMO = {
 } as const
 
 export const ESTADOS_SOLICITUD = {
-  ENVIADA_COCINA: 8,
-  MODIFICADA: 9,
-  ENVIADA_SALA: 10,
-  RECIBIDA: 11,
-  R_RECLAMO: 12,
-  CERRADA: 13,
-  C_RECLAMO: 14,
+  ENVIADA_COCINA:  {
+    id: 8,
+    label: 'Enviada a Cocina',
+    tabla: 'entrega',
+  },
+  MODIFICADA:  {
+    id: 9,
+    label: 'Modificada y Enviada a Cocina',
+    tabla: 'entrega',
+  },
+  ENVIADA_SALA:  {
+    id: 10,
+    label: 'Enviada a Sala',
+    tabla: 'entrega',
+  },
+  RECIBIDA:  {
+    id: 11,
+    label: 'Recibida en Sala',
+    tabla: 'reclamo',
+  },
+  R_RECLAMO:  {
+    id: 12,
+    label: 'Recibida en Sala con Reclamo',
+    tabla: 'reclamo',
+  },
+  CERRADA:  {
+    id: 13,
+    label: 'Cerrada',
+    tabla: 'cerrar',
+  },
+  C_RECLAMO:  {
+    id: 14,
+    label: 'Cerrada con Reclamo',
+    tabla: 'cerrar',
+  },
 } as const;
 
 export const ESTADOS_DETALLE = {
