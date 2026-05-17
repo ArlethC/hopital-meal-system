@@ -42,10 +42,6 @@ if (!fs.existsSync(uploadsPath)) {
   fs.mkdirSync(uploadsPath, { recursive: true });
 }
 
-// app.use('/uploads', express.static(uploadsPath, {
-//   fallthrough: false
-// }));
-
 app.use('/uploads', express.static(uploadsPath, {
   fallthrough: false,
   setHeaders: (res, path, stat) => {

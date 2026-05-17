@@ -9,9 +9,12 @@
 import 'reflect-metadata';
 import { bd } from './config/database';
 import { OrigenDatos } from './config/databaseORM';
+import { initSocket } from './socket'
 import app from './app';
+import http from 'http';
 import { programarCierres } from './services/horariosTiempoComida.service';
 
+const server = http.createServer(app);
 
 const PORT = process.env.PORT || 3000;
 
@@ -25,8 +28,9 @@ async function iniciarServidor() {
 
     programarCierres();
 
+    initSocket(server);
 
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
       console.log(`Servidor escuchando en http://localhost:${PORT}`);
     });
   } catch (error) {

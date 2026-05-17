@@ -9,14 +9,14 @@ import { Router } from 'express';
 const router = Router();
 import { verificarPermisos, verificarSesion } from '../middlewares/autenticacion';
 import { validarBody, validarIdParam } from '../middlewares/validaciones';
-import { ModificarReclamoSchema} from '../dtos/reclamos.dto';
+import { modificarRangoEdadSchema } from '@miapp/shared';
 import { upload } from '../middlewares/subirArchivo';
 import {reclamoObtener, reclamoResuelto, reclamoModificar, reclamoCrear, reclamoTiposObtener } from "../controllers/reclamos.controllers";
 
 
 router.post('/crear/:id', verificarPermisos("crear solicitud"), validarIdParam, upload.single('archivo'), reclamoCrear);
 
-router.patch('/modificar/:id', verificarPermisos("crear solicitud"), validarIdParam, validarBody(ModificarReclamoSchema), reclamoModificar);
+router.patch('/modificar/:id', verificarPermisos("crear solicitud"), validarIdParam, validarBody(modificarRangoEdadSchema), reclamoModificar);
 
 router.patch('/solucionado/:id', verificarPermisos("crear solicitud"), validarIdParam, reclamoResuelto);
 

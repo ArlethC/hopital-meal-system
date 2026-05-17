@@ -22,7 +22,8 @@ import { fetchTiemposComida, fecthSalas } from "../utils/fecthDatos";
 import { obtenerPacientesSala } from "../services/pacientes";
 import { ValidarFecha } from "../utils/validaciones";
 import { transformarPaciente } from "../utils/formatear";
-import type { PacienteOmitido, DatosSala } from "../types/solicitud";
+import type { PacienteOmitido } from "../types/solicitud";
+import type { DatosSalaPacientesSchemaDTO } from "@miapp/shared";
 import { validarCamposGenerico } from "../utils/validaciones";
 
 
@@ -146,7 +147,7 @@ const DietasCreatePage = () => {
             return;
         }
 
-        const datos = resultado.datos as DatosSala;
+        const datos = resultado.datos as DatosSalaPacientesSchemaDTO;
 
         if (ValidarFecha(fecha)) {
             notify({

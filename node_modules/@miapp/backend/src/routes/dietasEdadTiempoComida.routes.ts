@@ -11,14 +11,14 @@ const router = Router();
 import { paginacion } from '../middlewares/paginacion';
 import { validarBody, validarIdParam } from '../middlewares/validaciones';
 import { verificarPermisos } from '../middlewares/autenticacion';
-import { CrearDietaEdadTiempoShema, ModificarDietaEdadTiempoShema } from '../dtos/dietasEdadTiempoComida.dto';
+import { crearDietaEdadTiempoShema, modificarDietaEdadTiempoShema } from  "@miapp/shared";
 import { crearDietaEdadTiempo, actualizarDietaEdadTiempo, desactivarDietaEdadTiempo, obtenerDietasEdadTiempoFiltradas } from '../controllers/dietasEdadTiempoComida.controllers';
 
-router.post('/crear', verificarPermisos("admin"),  validarBody(CrearDietaEdadTiempoShema), crearDietaEdadTiempo);
+router.post('/crear', verificarPermisos("admin"),  validarBody(crearDietaEdadTiempoShema), crearDietaEdadTiempo);
 
 router.get('/filtrado', verificarPermisos(["admin", "crear solicitud", "solicitud extraordinaria"]),  paginacion, obtenerDietasEdadTiempoFiltradas);
 
-router.put('/modificar/:id', verificarPermisos("admin"), validarIdParam, validarBody(ModificarDietaEdadTiempoShema), actualizarDietaEdadTiempo);
+router.put('/modificar/:id', verificarPermisos("admin"), validarIdParam, validarBody(modificarDietaEdadTiempoShema), actualizarDietaEdadTiempo);
 
 router.delete('/eliminar/:id', verificarPermisos("admin"), validarIdParam, desactivarDietaEdadTiempo);
 

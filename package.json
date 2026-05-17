@@ -1,5 +1,12 @@
 {
   "name": "hospital-meal-system",
   "private": true,
-  "workspaces": ["shared", "Backend", "Frontend"]
+  "workspaces": [
+    "shared",
+    "Backend",
+    "Frontend"
+  ],
+  "dependencies": {
+    "zod": "^4.4.3"
+  }
 }

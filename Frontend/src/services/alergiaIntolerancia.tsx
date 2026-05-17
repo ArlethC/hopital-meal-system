@@ -6,16 +6,10 @@
     Version: 1.0.0
 */
 import api from './AxiosService';
-import type { AlergiaIntolerancia, AlergiasIntoleranciasPaciente } from '@miapp/shared';
+import type { AlergiaIntolerancia, AlergiasIntoleranciasPaciente, CrearAlergiaDTO } from '@miapp/shared';
 
 
-type DatosPaciente = {
-    expediente: string;
-    alergiasIntolerancias: string;
-}
-
-
-export const crearAlergiaIntolerancia = async (data: DatosPaciente): Promise<AlergiaIntolerancia[]> => {
+export const crearAlergiaIntolerancia = async (data: CrearAlergiaDTO): Promise<AlergiaIntolerancia[]> => {
     const response = await api.post<AlergiaIntolerancia[]>('/api/alergias/crear', data);
     return response.data;
 }

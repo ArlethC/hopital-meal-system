@@ -10,14 +10,14 @@ import { Router } from 'express';
 const router = Router();
 import { validarBody, validarIdParam } from '../middlewares/validaciones';
 import { verificarPermisos } from '../middlewares/autenticacion';
-import { CrearRangoEdadSchema, ActualizarRangoEdadSchema } from '../dtos/rangosEdad.dto';
+import { modificarRangoEdadSchema, crearRangoEdad } from '@miapp/shared';
 import { crearRangoEdadController, obtenerRangosEdadController, actualizarRangoEdad, desactivarRangoEdad } from '../controllers/rangosEdad.controllers';
 
-router.post('/crear', verificarPermisos("admin"), validarBody(CrearRangoEdadSchema), crearRangoEdadController);
+router.post('/crear', verificarPermisos("admin"), validarBody(crearRangoEdad), crearRangoEdadController);
 
 router.get('/obtenerTodos',  verificarPermisos("admin"), obtenerRangosEdadController);
 
-router.put('/modificar/:id', verificarPermisos("admin"), validarIdParam, validarBody(ActualizarRangoEdadSchema), actualizarRangoEdad);
+router.put('/modificar/:id', verificarPermisos("admin"), validarIdParam, validarBody(modificarRangoEdadSchema), actualizarRangoEdad);
 
 router.delete('/eliminar/:id',verificarPermisos("admin"), validarIdParam, desactivarRangoEdad);
 

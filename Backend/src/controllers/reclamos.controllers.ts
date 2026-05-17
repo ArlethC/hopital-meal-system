@@ -7,7 +7,7 @@
 */
 import { Request, Response, NextFunction } from 'express';
 import { estadoReclamo, modificarReclamo, crearReclamo, verificarExisteDetalle, obtenerReclamo, obtenerTiposReclamos } from '../services/reclamos.service';
-import { CrearReclamoSchema } from '../dtos/reclamos.dto';
+import { crearReclamoSchema } from '../dtos/reclamos.dto';
 import path from 'path';
 import fs from 'fs';
 
@@ -32,7 +32,7 @@ export const reclamoCrear = async (req: Request, res: Response, next: NextFuncti
 
         const rutaDocumento = req.file ? path.join('uploads', req.file.filename) : undefined;
 
-        const result = CrearReclamoSchema.safeParse({
+        const result = crearReclamoSchema.safeParse({
             idReclamo: parseInt(req.body.idReclamo),
             observacion: req.body.observacion,
         });

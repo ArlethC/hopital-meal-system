@@ -6,7 +6,7 @@
     Version: 1.0.1
 */
 import { Request, Response, NextFunction } from 'express';
-import { ZodSchema } from 'zod';
+import { z } from "zod";
 
 // Middleware para validar el id en los parametros de la petición
 export function validarIdParam(req: Request, res: Response, next: NextFunction) {
@@ -38,7 +38,7 @@ export function validarExpedienteParam(req: Request, res: Response, next: NextFu
 }
 
 // Middleware para validar el body de la petición 
-export function validarBody(schema: ZodSchema<any>) {
+export function validarBody(schema: z.ZodTypeAny) {
   return (req: Request, res: Response, next: NextFunction) => {
     const validacion = schema.safeParse(req.body);
 

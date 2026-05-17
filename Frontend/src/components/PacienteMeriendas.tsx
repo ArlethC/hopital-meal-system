@@ -7,7 +7,8 @@
 */
 import { useEffect, useState } from 'react';
 import { Plus, Trash } from 'react-feather';
-import { obtenerMeriendas, crearMerienda, type DatosMerienda, dietasMerienda, desactivarMerienda } from '../services/meriendas';
+import { obtenerMeriendas, crearMerienda, dietasMerienda, desactivarMerienda } from '../services/meriendas';
+import type { crearMeriendaShemaDTO } from "@miapp/shared";
 import { fetchTiemposComida } from '../utils/fecthDatos';
 import { type ValorCatalogo } from '../types/ui';
 import { formatearNombre, } from "../utils/formatear";
@@ -152,7 +153,7 @@ export const PacienteMeriendas = ({
             }
         }
 
-        const datos = resultado.datos as DatosMerienda;
+        const datos = resultado.datos as crearMeriendaShemaDTO;
 
         if (datos) {
             try {

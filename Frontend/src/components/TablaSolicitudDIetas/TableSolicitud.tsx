@@ -7,7 +7,7 @@
 */
 import React, { useState } from 'react';
 import { FileText, AlertTriangle, X, Printer } from 'react-feather';
-import { type ModificacionCocina, type ModificacionNutricion, type ModificacionEnfermeria, type DetalleOrden } from '../../types/solicitud';
+import { type ModificacionCocinaShemaDTO, type ModificacionNutricionShemaDTO, type modificacionEnfermeriaShemaDTO, type DetalleOrden } from '../../types/solicitud';
 import { modificarCocina, modificarNutricion, modificarEnfermeria, cancelarDetalle, reactivarDetalle } from '../../services/detallesSolicitud';
 import type { PacienteUi, PacienteModificar, PacienteFinalizado, Dieta } from '../../types/ui';
 import { obtenerValorCampo, puedeEditar, puedeVerColumna, esPacienteNoCrear, getPacienteKey } from './utils/tablaUtils';
@@ -151,7 +151,7 @@ const TablaOrdenesDieta: React.FC<PropsTabla> = ({
 
             let pacienteActualizado: DetalleOrden | null = null;
             if (camposModificados.includes("obsEnfermeria") || camposModificados.includes("dietaSeleccionada")) {
-                const body: ModificacionEnfermeria = { id: Number(id) };
+                const body: modificacionEnfermeriaShemaDTO = { id: Number(id) };
 
                 if ("obsEnfermeria" in cambiosMod) {
                     body.obsEnfermeria = cambiosMod.obsEnfermeria || "";
@@ -168,14 +168,14 @@ const TablaOrdenesDieta: React.FC<PropsTabla> = ({
                     return;
                 }
             } else if (camposModificados.includes("obsNutricion") && cambiosMod.obsNutricion !== undefined) {
-                const body: ModificacionNutricion = {
+                const body: ModificacionNutricionShemaDTO = {
                     id: Number(id),
                     obsNutricion: cambiosMod.obsNutricion,
                 };
                 pacienteActualizado = await modificarNutricion(body);
 
             } else if (camposModificados.includes("obsCocina") && cambiosMod.obsCocina !== undefined) {
-                const body: ModificacionCocina = {
+                const body: ModificacionCocinaShemaDTO = {
                     id: Number(id),
                     obsCocina: cambiosMod.obsCocina,
                 };

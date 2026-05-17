@@ -10,7 +10,7 @@ const router = Router();
 
 import { validarBody, validarIdParam } from '../middlewares/validaciones';
 import { crearAlergiaController, modificarAlergiaController, desactivarAlergiaController, getAlergias } from "../controllers/alergiaIntolerancia.controllers";
-import { crearAlergiaShema, modificarAlergiaShema } from "../dtos/alergiasIntolerancias.dto";
+import { crearAlergiaShema, modificarAlergiaShema } from "@miapp/shared";
 import { verificarPermisos } from '../middlewares/autenticacion';
 
 

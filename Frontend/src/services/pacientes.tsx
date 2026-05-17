@@ -6,8 +6,7 @@
     Version: 1.0.1
 */
 import api from './AxiosService';
-import type { DatosSala } from '../types/solicitud';
-import type { Paciente, PacientesList, Salas } from "@miapp/shared";
+import type { Paciente, PacientesList, Salas, DatosSalaPacientesSchemaDTO } from "@miapp/shared";
 
 
 export type PacienteResponse = {
@@ -35,7 +34,7 @@ export const obtenerPacientes = async (params: string): Promise<PacienteResponse
     return response.data;
 };
 
-export async function obtenerPacientesSala(data: DatosSala): Promise<PacientesList[]> {
+export async function obtenerPacientesSala(data: DatosSalaPacientesSchemaDTO): Promise<PacientesList[]> {
     const response = await api.post<PacientesList[]>('/api/pacientes/pacienteSala', data);
     return response.data;
 }

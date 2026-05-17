@@ -9,7 +9,8 @@ import { OrigenDatos } from "../config/databaseORM";
 import { DetallesMerienda } from "../entities/Meriendas";
 import { HttpError } from "../utils/HttpError";
 import { existePaciente } from './paciente.service';
-import { CrearMerienda, toMeriendaDto } from '../dtos/merienda.dto';
+import type { crearMeriendaShemaDTO } from "@miapp/shared";
+import { toMeriendaDto } from '../dtos/merienda.dto';
 import { registrarHistorial, TipoOperacion } from "./historial.service";
 import { existeIdTiempoComida, validarHorario } from "./horariosTiempoComida.service";
 import { validarDietaExiste } from "./dietas.service";
@@ -18,7 +19,7 @@ import { TIEMPOS_COMIDA } from '../config/Constantes';
 
 const repo = OrigenDatos.getRepository(DetallesMerienda);
 
-export async function crearDetallesMerienda(datos: CrearMerienda, usuario: string, ipUsuario: string) {
+export async function crearDetallesMerienda(datos: crearMeriendaShemaDTO, usuario: string, ipUsuario: string) {
     const paciente = await existePaciente(datos.expediente);
 
     if (!paciente || paciente.length === 0) {
@@ -28,6 +29,22 @@ export async function crearDetallesMerienda(datos: CrearMerienda, usuario: strin
     await existeIdTiempoComida(datos.idTiempoComida);
 
     await validarDietaExiste(datos.idDieta);
+
+    const { fechaVal: fechaIni } = validarYCompararFecha(datos.fechaInicioMerienda)
+    if (fechaIni == null) {
+        throw new HttpError("La fecha inicial debe ser válida y no menor a hoy", 400);
+    }
+
+    if (datos.fechaFinMerienda) {
+        const { fechaVal: fechaFin } = validarYCompararFecha(datos.fechaFinMerienda)
+        if (fechaFin == null) {
+            throw new HttpError("La fecha final debe ser válida y no menor a hoy", 400);
+        } else {
+            if (fechaFin < fechaIni) {
+                throw new HttpError("La fecha final debe ser mayor que la fecha inicial", 400);
+            }
+        }
+    }
 
     //No puede crear una merienda para la fecha actual si el tiempo de modificacion ha pasado
     const horarioModificacion = await validarHorario(datos.idTiempoComida);

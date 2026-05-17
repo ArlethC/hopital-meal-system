@@ -10,7 +10,9 @@ const router = Router();
 import { validarBody, validarIdParam } from '../middlewares/validaciones';
 import { paginacion } from '../middlewares/paginacion';
 import { verificarPermisos, verificarSesion } from '../middlewares/autenticacion';
-import { crearSolicitudShema, buscarSolicitud, esquemaIdDetalles } from '../dtos/solictudDietas.dto';
+import { buscarSolicitud } from '@miapp/shared';
+import { crearSolicitudShema, esquemaIdDetalles } from '../dtos/solictudDietas.dto';
+
 import { crearSolicitudController, obtenerSolicitudesParaModificar, solicitudRecibidaParcial, solicitudRecibida, obtenerSolicitudesParaRecibir, obtenerSolicitudes, obtenerSolicitudesTodas, obtenerSolicitud, obtenerEstadosSolicitud } from '../controllers/solicitudDietas.controllers';
 
 

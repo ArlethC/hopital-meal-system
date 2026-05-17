@@ -7,16 +7,7 @@
 */
 import api from './AxiosService';
 import type { Dieta } from '../types/ui';
-import type { Merienda } from "@miapp/shared";
-
-
-export type DatosMerienda = {
-    expediente: string;
-    idDieta: number;
-    idTiempoComida: number;
-    fechaInicioMerienda: string;
-    fechaFinMerienda?: string;
-}
+import type { Merienda, crearMeriendaShemaDTO } from "@miapp/shared";
 
 type ResponseMerienda = {
     data: Merienda[];
@@ -26,7 +17,7 @@ type ResponseMerienda = {
 	totalPages: number;
 }
 
-export const crearMerienda = async (data: DatosMerienda) => {
+export const crearMerienda = async (data: crearMeriendaShemaDTO) => {
     const response = await api.post('/api/merienda/crear', data);
     return response.data;
 }

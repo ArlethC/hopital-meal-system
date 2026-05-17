@@ -15,8 +15,9 @@ import TimePicker from "react-time-picker";
 import 'react-time-picker/dist/TimePicker.css';
 import 'react-clock/dist/Clock.css';
 import ConfirmDialog from "../components/ConfimModal";
-import type { HorarioTiempoComida } from '@miapp/shared';
-import { obtenerHorariosTiempoComida, actualizarHorarioTiempoComida, crearHorarioTiempoComida, eliminarHorarioTiempoComida, type NewHorario } from '../services/horariosTiempoComida'
+import type { HorarioTiempoComida, CrearTiempoComidaHorarioShemaDTO } from '@miapp/shared';
+import { obtenerHorariosTiempoComida, actualizarHorarioTiempoComida, crearHorarioTiempoComida, eliminarHorarioTiempoComida, } from '../services/horariosTiempoComida';
+
 import { fetchTiemposComida } from "../utils/fecthDatos";
 import { esHoraValida } from "../utils/formatear";
 import { useUnsavedChangesWarning } from "../hooks/advertenciaCambiosNoGuardados";
@@ -117,7 +118,7 @@ const HorarioComidaPage = () => {
             return;
         }
 
-        const datos = resultado.datos as NewHorario;
+        const datos = resultado.datos as CrearTiempoComidaHorarioShemaDTO;
 
         if (!esHoraValida(horaModificacion)) {
             notify({

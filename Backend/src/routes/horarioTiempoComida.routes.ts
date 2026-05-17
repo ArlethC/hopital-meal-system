@@ -7,17 +7,17 @@
 */
 import { Router } from 'express';
 const router = Router();
-import { CrearTiempoComidaHorarioShema, ModificarTiempoComidaHorarioShema } from '../dtos/horariosTiempoComida.dto';
 import { validarBody, validarIdParam } from '../middlewares/validaciones';
+import { crearTiempoComidaHorarioShema, modificarTiempoComidaHorarioShema } from '@miapp/shared';
 import { verificarPermisos } from '../middlewares/autenticacion';
 import { crearHorarioTiempoComida, obtener, actualizarHorarioComida, desactivarHorarioComida } from '../controllers/horariosTiemposComida.controllers';
 
 
-router.post('/crear',verificarPermisos("admin"), validarBody(CrearTiempoComidaHorarioShema), crearHorarioTiempoComida);
+router.post('/crear',verificarPermisos("admin"), validarBody(crearTiempoComidaHorarioShema), crearHorarioTiempoComida);
 
 router.get('/todos', verificarPermisos("admin"), obtener);
 
-router.put('/modificar/:id',verificarPermisos("admin"), validarIdParam, validarBody(ModificarTiempoComidaHorarioShema), actualizarHorarioComida);
+router.put('/modificar/:id',verificarPermisos("admin"), validarIdParam, validarBody(modificarTiempoComidaHorarioShema), actualizarHorarioComida);
 
 router.delete('/desactivar/:id',verificarPermisos("admin"), validarIdParam, desactivarHorarioComida);
 

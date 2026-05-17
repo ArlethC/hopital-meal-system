@@ -9,7 +9,8 @@ import { Request, Response, NextFunction } from 'express';
 import { obtenerListTiposDocumentos, crearDocumentoNutricion, desactivarDocumentoNutricion, obtenerDocumentosPaciente } from '../services/documentosNutricion.service';
 import { existePaciente } from '../services/paciente.service';
 import path from 'path';
-import { CrearDocumentoShema } from '../dtos/documentosNutricion.dto';
+import { crearDocumentoShema } from '../dtos/documentosNutricion.dto';
+
 import fs from 'fs';
 
 import { RUTA_UPLOADS } from '../config/Constantes';
@@ -57,7 +58,7 @@ export const crearDocumento = async (req: Request, res: Response, next: NextFunc
     };
 
     try {
-        const result = CrearDocumentoShema.safeParse({
+        const result = crearDocumentoShema.safeParse({
             expediente: req.body.expediente,
             idTipoDocumento: parseInt(req.body.idTipoDocumento),
             fechaInicial: req.body.fechaInicial,

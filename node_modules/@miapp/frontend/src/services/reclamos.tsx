@@ -6,13 +6,7 @@
     Version: 2.0.1
 */
 import api from './AxiosService';
-import type { Reclamo, TipoReclamo } from "@miapp/shared";
-
-export type ReclamoData = {
-    idReclamo?: number;
-    observacion?: string;
-    archivo?: File;
-}
+import type { Reclamo, TipoReclamo, ModificarReclamoSchemaDTO } from "@miapp/shared";
 
 type CrearReclamoResponse = {
   mensaje: string;
@@ -36,7 +30,7 @@ export const crearReclamo = async (id: string, data: FormData): Promise<CrearRec
     return response.data;
 };
 
-export const modificarReclamo = async (id: string, data: ReclamoData) => {
+export const modificarReclamo = async (id: string, data: ModificarReclamoSchemaDTO) => {
     const response = await api.patch(`/api/reclamos/modificar/${id}`, data);
     return response.data;
 };

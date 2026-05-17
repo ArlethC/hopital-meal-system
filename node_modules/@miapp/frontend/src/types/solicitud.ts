@@ -6,38 +6,10 @@
     Version: 1.0.1
 */
 import type { Salas } from '../types/ui';
-import type { DetalleOrden, OrdenBase, PacienteOmitido, Historial } from "@miapp/shared";
+import type { DetalleOrden, OrdenBase, PacienteOmitido, Historial, BuscarSolicitudSchemaDTO, ModificacionNutricionShemaDTO,modificacionEnfermeriaShemaDTO, ModificacionCocinaShemaDTO} from "@miapp/shared";
 
 
 //Datos de entrada de la api
-type DatosSala = {
-    sala: string;
-    fecha: string;
-    idTiempoComida: number;
-}
-
-type DatosFiltroSolicitud = {
-    sala?: string;
-    fecha?: string;
-    idTiempoComida?: number;
-    idEstado?: number;
-}
-
-type ModificacionCocina = {
-  id: number;
-  obsCocina: string;
-}
-
-type ModificacionNutricion = {
-  id: number;
-  obsNutricion: string;
-}
-
-type ModificacionEnfermeria = {
-  id: number;
-  idDieta?: number;
-  obsEnfermeria?: string;
-}
 
 type DetalleEntrega = {
     expediente: string;
@@ -77,14 +49,13 @@ interface RespuestaOrdenes {
 
 
 export {
-  type DatosSala,
-  type ModificacionCocina,
-  type ModificacionNutricion,
-  type ModificacionEnfermeria,
+  type ModificacionCocinaShemaDTO,
+  type ModificacionNutricionShemaDTO,
+  type modificacionEnfermeriaShemaDTO,
   type DetalleEntrega,
   type RespuestaEntregaDietas,
   type Salas,
-  type DatosFiltroSolicitud,
+  type BuscarSolicitudSchemaDTO,
   type IdDetallesPayload,
 
   type PacienteOmitido,

@@ -7,19 +7,14 @@
 */
 
 import api from './AxiosService';
-import type { HorarioTiempoComida } from '@miapp/shared';
+import type { HorarioTiempoComida, CrearTiempoComidaHorarioShemaDTO } from '@miapp/shared';
 
-export type NewHorario = {
-    idTiempoComida: number;
-    horaModificacion: string;
-    horaCierre: string;
-}
 
 export type HorarioResponse = {
     data: HorarioTiempoComida[];
 }
 
-export const crearHorarioTiempoComida = async (data: NewHorario): Promise<HorarioTiempoComida> => {
+export const crearHorarioTiempoComida = async (data: CrearTiempoComidaHorarioShemaDTO): Promise<HorarioTiempoComida> => {
     const response = await api.post<HorarioTiempoComida>('/api/horarioTiempoComida/crear', data);
     return response.data;
 }
@@ -29,7 +24,7 @@ export const obtenerHorariosTiempoComida = async (): Promise<HorarioResponse> =>
     return response.data;
 };
 
-export const actualizarHorarioTiempoComida = async (id: string, data: Partial<NewHorario>) => {
+export const actualizarHorarioTiempoComida = async (id: string, data: Partial<CrearTiempoComidaHorarioShemaDTO>) => {
     await api.put(`/api/horarioTiempoComida/modificar/${id}`, data);
 }
 

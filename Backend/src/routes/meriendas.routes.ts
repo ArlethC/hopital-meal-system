@@ -10,7 +10,7 @@ const router = Router();
 import { validarIdParam, validarExpedienteParam, validarBody } from '../middlewares/validaciones';
 import { desactivarMeriendaPaciente, crearMeriendaPaciente, obtenerMeriendasPaciente, getDietasMerienda } from '../controllers/meriendas.controllers';
 import { verificarPermisos } from '../middlewares/autenticacion';
-import { crearMerienda } from '../dtos/merienda.dto';
+import { crearMerienda } from '@miapp/shared';
 import { paginacion } from "../middlewares/paginacion";
 
 router.get('/paciente/:expediente', verificarPermisos('meriendas'), validarExpedienteParam, paginacion, obtenerMeriendasPaciente);

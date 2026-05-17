@@ -13,8 +13,8 @@ import { validarCamposGenerico } from "../utils/validaciones";
 import { useUnsavedChangesWarning } from "../hooks/advertenciaCambiosNoGuardados";
 import type { PacienteUi } from '../types/ui';
 import { formatearNombre } from "../utils/formatear";
-import { estadoReclamo, modificarReclamo, crearReclamo, obtenerReclamo, obtenerTiposReclamo, type ReclamoData } from "../services/reclamos";
-import type { Reclamo, TipoReclamo } from "@miapp/shared";
+import { estadoReclamo, modificarReclamo, crearReclamo, obtenerReclamo, obtenerTiposReclamo } from "../services/reclamos";
+import type { Reclamo, TipoReclamo, ModificarReclamoSchemaDTO } from "@miapp/shared";
 
 type Modo = 'crear' | 'verConAcciones' | 'editar' | 'soloVer';
 
@@ -132,7 +132,7 @@ export function FormularioReclamoContainer({
       return;
     }
 
-    const datos = resultado.datos as ReclamoData;
+    const datos = resultado.datos as ModificarReclamoSchemaDTO;
     try {
       if (datos) {
         if (modo === 'crear') {

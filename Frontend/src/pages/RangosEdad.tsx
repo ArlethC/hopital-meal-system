@@ -13,8 +13,8 @@ import Dropdown from '../components/Dropdown';
 import { ModalForm } from '../components/ModalForm';
 import { useNotifications } from '../hooks/notificacionHook';
 import ConfirmDialog from "../components/ConfimModal";
-
-import { actualizarRangoEdad, crearRangoEdad, eliminarRangoEdad, type NewAgeRange } from "../services/rangosEdadService";
+import type { CrearRangoEdadSchemaDTO } from '@miapp/shared';
+import { actualizarRangoEdad, crearRangoEdad, eliminarRangoEdad } from "../services/rangosEdadService";
 import { useUnsavedChangesWarning } from "../hooks/advertenciaCambiosNoGuardados";
 import { obtenerEdadYUnidad } from "../utils/formatear";
 import { fetchRangosEdad } from "../utils/fecthDatos";
@@ -152,7 +152,7 @@ const AgeRangesManager = () => {
             return;
         }
 
-        const datos = resultado.datos as NewAgeRange;
+        const datos = resultado.datos as CrearRangoEdadSchemaDTO;
 
         if (parseInt(minAge) >= parseInt(maxAge)) {
             notify({ type: 'warning', title: 'Datos  inválidos', content: 'La edad mínima debe ser menor que la edad máxima.', duration: 3000,});
@@ -160,7 +160,7 @@ const AgeRangesManager = () => {
         }
         try {
 
-            datos['unidad'] = unit;
+            datos['unidad'] = unit as 'meses' | 'años';
 
             if (editingId && originalRange) {
                 const cambios: Partial<typeof datos> = {}

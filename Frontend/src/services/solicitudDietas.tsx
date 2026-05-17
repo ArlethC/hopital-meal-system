@@ -10,7 +10,7 @@ import type {
    RespuestaEntregaDietas,
    PacienteOmitido,
    RespuestaOrdenes,
-   DatosFiltroSolicitud,
+   BuscarSolicitudSchemaDTO,
    IdDetallesPayload,
    OrdenDieta,
 } from '../types/solicitud';
@@ -26,7 +26,7 @@ export async function crearSolicitud(data: RespuestaEntregaDietas): Promise<Paci
     return response.data;
 }
 
-export async function obtenerSolicitudesMod(data: DatosFiltroSolicitud, params: string): Promise<RespuestaOrdenes> {
+export async function obtenerSolicitudesMod(data: BuscarSolicitudSchemaDTO, params: string): Promise<RespuestaOrdenes> {
     const response = await api.post<RespuestaOrdenes>(`/api/solicitudDietas/modificar?${params}`, data);
     return response.data;
 }
@@ -38,7 +38,7 @@ export async function obtenerSolicitud(id: string): Promise<OrdenDieta> {
 
 
 
-export async function obtenerSolicitudesRecibido(data: DatosFiltroSolicitud, params: string): Promise<RespuestaOrdenes> {
+export async function obtenerSolicitudesRecibido(data: BuscarSolicitudSchemaDTO, params: string): Promise<RespuestaOrdenes> {
     const response = await api.post<RespuestaOrdenes>(`/api/solicitudDietas/recibir?${params}`, data);
     return response.data;
 }
@@ -53,12 +53,12 @@ export async function recibidoParcialSolicitud(id: string, data: IdDetallesPaylo
     return response.data;
 }
 
-export async function obtenerSolicitudesCerrar(data: DatosFiltroSolicitud, params: string): Promise<RespuestaOrdenes> {
+export async function obtenerSolicitudesCerrar(data: BuscarSolicitudSchemaDTO, params: string): Promise<RespuestaOrdenes> {
     const response = await api.post<RespuestaOrdenes>(`/api/solicitudDietas/cerrar?${params}`, data);
     return response.data;
 }
 
-export async function obtenerSolicitudesTodas(data: DatosFiltroSolicitud, params: string): Promise<RespuestaOrdenes> {
+export async function obtenerSolicitudesTodas(data: BuscarSolicitudSchemaDTO, params: string): Promise<RespuestaOrdenes> {
     const response = await api.post<RespuestaOrdenes>(`/api/solicitudDietas/todas?${params}`, data);
     return response.data;
 }

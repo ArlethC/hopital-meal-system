@@ -9,29 +9,23 @@
 import api from './AxiosService';
 import { type AgeRange} from  '../types/ui';
 
+import type { CrearRangoEdadSchemaDTO } from '@miapp/shared';
+
 export type AgeRangeResponse = {
   data: AgeRange[];
   total: number;
 };
-
-export type NewAgeRange = {
-    descripcion: string;
-    edadMinima: number;
-    edadMaxima: number;
-    unidad: string;
-};
-
 
 export const obtenerRangosEdad = async (): Promise<AgeRangeResponse> => {
     const response = await api.get<AgeRangeResponse>('/api/rangoEdad/obtenerTodos');
     return response.data;
 };
 
-export const actualizarRangoEdad = async (id: string, data: Partial<NewAgeRange>) => {
+export const actualizarRangoEdad = async (id: string, data: Partial<CrearRangoEdadSchemaDTO>) => {
     await api.put(`/api/rangoEdad/modificar/${id}`, data);
 }
 
-export const crearRangoEdad = async (data: NewAgeRange): Promise<AgeRange> => {
+export const crearRangoEdad = async (data: CrearRangoEdadSchemaDTO): Promise<AgeRange> => {
     const response = await api.post<AgeRange>('/api/rangoEdad/crear', data);
     return response.data;
 }

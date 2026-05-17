@@ -10,6 +10,7 @@ import { DocumentoNutricion } from "../entities/DocumentosNutricion";
 import { ValorCatalogoMedico } from "../entities/DocumentosNutricion";
 import { HttpError } from "../utils/HttpError";
 import { registrarHistorial, TipoOperacion } from "./historial.service";
+import { validarYCompararFecha } from "../utils/validaciones";
 import { toDocumentoDto } from "../dtos/documentosNutricion.dto";
 import type { Documento } from "@miapp/shared";
 import { CATALOGO_TIPO_DOCUMENTO } from "../config/Constantes";
@@ -35,6 +36,22 @@ export async function crearDocumentoNutricion({
     {
         expediente: string; idTipoDocumento: number; usuario: string; ipUsuario: string; obsDocumento?: string, rutaDocumento: string; fechaInicial: string; fechaFinalVigencia?: string;
     }) {
+
+    const { fechaVal: fechaIni } = validarYCompararFecha(fechaInicial)
+    if (fechaIni == null) {
+        throw new HttpError("La fecha inicial debe ser válida y no menor a hoy", 400);
+    }
+
+    if (fechaFinalVigencia) {
+        const { fechaVal: fechaFin } = validarYCompararFecha(fechaFinalVigencia)
+        if (fechaFin == null) {
+            throw new HttpError("La fecha final debe ser válida y no menor a hoy", 400);
+        } else {
+            if (fechaFin < fechaIni) {
+                throw new HttpError("La fecha final debe ser mayor que la fecha inicial", 400);
+            }
+        }
+    }
 
     const nuevo = repo.create({
         expediente,

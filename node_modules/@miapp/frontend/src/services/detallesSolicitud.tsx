@@ -7,9 +7,9 @@
 */
 import api from './AxiosService';
 import type {
-   ModificacionCocina,
-   ModificacionNutricion,
-   ModificacionEnfermeria,
+   ModificacionCocinaShemaDTO,
+   ModificacionNutricionShemaDTO,
+   modificacionEnfermeriaShemaDTO,
    DetalleOrden,
    Historial,
 } from '../types/solicitud';
@@ -29,17 +29,17 @@ export async function reactivarDetalle(id: string){
     return response.data;
 }
 
-export async function modificarEnfermeria(datos: ModificacionEnfermeria): Promise<DetalleOrden>{
+export async function modificarEnfermeria(datos: modificacionEnfermeriaShemaDTO): Promise<DetalleOrden>{
     const response = await api.patch<DetalleOrden>(`/api/solicitud/detalles/enfermeria`, datos);
     return response.data;
 }
 
-export async function modificarNutricion(datos: ModificacionNutricion): Promise<DetalleOrden>{
+export async function modificarNutricion(datos: ModificacionNutricionShemaDTO): Promise<DetalleOrden>{
     const response = await api.patch<DetalleOrden>(`/api/solicitud/detalles/nutricion`, datos);
     return response.data;
 }
 
-export async function modificarCocina(datos: ModificacionCocina): Promise<DetalleOrden> {
+export async function modificarCocina(datos: ModificacionCocinaShemaDTO): Promise<DetalleOrden> {
     const response = await api.patch<DetalleOrden>(`/api/solicitud/detalles/cocina`, datos);
     return response.data;
 }
