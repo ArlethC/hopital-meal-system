@@ -9,8 +9,8 @@ import React from 'react';
 
 interface PropsEncabezado {
     estado: string;
-    permisoUsuario: Record<string, boolean>;
-    puedeVerColumna: (columna: string, permisoUsuario: Record<string, boolean>, estado: string) => boolean | undefined
+    permisoUsuario: string[];
+    puedeVerColumna: (columna: string, permisoUsuario: string[], estado: string) => boolean | undefined
 }
 
 const TablaEncabezado: React.FC<PropsEncabezado> = ({ estado, permisoUsuario, puedeVerColumna }) => {

@@ -12,8 +12,11 @@ import { Transaction } from 'mssql';
 import { registrarHistorial, TipoOperacion } from "./historial.service";
 import { existeIdTiempoComida, validarHorario } from "./horariosTiempoComida.service";
 import { validarYCompararFecha } from '../utils/validaciones';
+import { actualizarPantallaSolicitudes } from '../socket/emitters/solicitudes.emitters';
 import { enviarCorreo } from '../utils/funcionEnviarCorreo';
 import { toOrdenDto, toCatalogoDto, toPacienteOmitido} from '../dtos/solictudDietas.dto';
+import { solicitudActualizaPantalla } from './solictudSocket.service';
+
 
 export async function duplicadoSolicitud(sala: string, fecha: string, idTiempoComida: number) {
 
@@ -103,7 +106,13 @@ WHERE id_catalogo = 3 AND activo = 1 AND  id_valor_catalogo = @idTiempoComida
             }
         });
 
+        
+        if(solicitudActualizaPantalla(fechaEntrega, idTiempoComida)){
+            await actualizarPantallaSolicitudes();
+        }
+
         return pacientesConDieta.recordset.map(toPacienteOmitido);
+        
     } catch (error: any) {
         if (typeof error.message === 'string') {
             if (error.message.includes('fechas pasadas')) {

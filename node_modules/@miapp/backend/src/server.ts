@@ -3,7 +3,7 @@
     Descripcion: contiene la configuracion del servidor 
     Autor: Marilyn Castro
     Fecha creacion: 30/06/2025
-    Version: 1.0.0
+    Version: 1.0.2
 */
 
 import 'reflect-metadata';
@@ -13,6 +13,7 @@ import { initSocket } from './socket'
 import app from './app';
 import http from 'http';
 import { programarCierres } from './services/horariosTiempoComida.service';
+import { programarActualizacionPantallaMeriendas, programarActualizacionPantalla } from './utils/funcionesTiempoComida';
 
 const server = http.createServer(app);
 
@@ -27,6 +28,8 @@ async function iniciarServidor() {
     console.log('Conexión con SQL Server (mssql) ');
 
     programarCierres();
+    programarActualizacionPantalla();
+    programarActualizacionPantallaMeriendas();
 
     initSocket(server);
 

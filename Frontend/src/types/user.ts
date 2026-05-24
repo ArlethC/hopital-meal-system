@@ -8,5 +8,5 @@
 
 export interface User {
   name: string;
-  permissions: Record<string, true>;
+  permissions: string[];
 }

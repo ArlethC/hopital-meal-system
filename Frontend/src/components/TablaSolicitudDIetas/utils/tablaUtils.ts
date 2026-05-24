@@ -18,24 +18,24 @@ export function esPacienteNoCrear(p: PacienteUi): p is Exclude<PacienteUi, Pacie
 
 export function puedeVerColumna(
     columna: string,
-    permisoUsuario: Record<string, boolean>,
+    permisoUsuario: string[],
     estado: string
 ) {
     switch (columna) {
         case 'obsEnfermeria':
-            return (permisoUsuario && (permisoUsuario['crear solicitud'] || permisoUsuario['admin'] || permisoUsuario['ver solicitudes'] || permisoUsuario['nutricion'] || permisoUsuario['solicitud extraordinaria']));
+            return (permisoUsuario && (permisoUsuario.includes('crear solicitud') || permisoUsuario.includes('admin') || permisoUsuario.includes('ver solicitudes') || permisoUsuario.includes('nutricion') || permisoUsuario.includes('solicitud extraordinaria')));
         case 'obsNutricion':
-            return (estado != 'crear' && (permisoUsuario['crear solicitud'] || permisoUsuario['admin'] || permisoUsuario['ver solicitudes'] || permisoUsuario['nutricion']));
+            return (estado != 'crear' && (permisoUsuario.includes('crear solicitud') || permisoUsuario.includes('admin') || permisoUsuario.includes('ver solicitudes') || permisoUsuario.includes('nutricion')));
         case 'obsCocina':
-            return estado != 'crear'  && (permisoUsuario['cocina'] || permisoUsuario['nutricion'] || permisoUsuario['admin'] || permisoUsuario['ver solicitudes']);
+            return estado != 'crear'  && (permisoUsuario.includes('cocina') || permisoUsuario.includes('nutricion') || permisoUsuario.includes('admin') || permisoUsuario.includes('ver solicitudes'));
         case 'observaciones':
-            return (estado != 'crear' && permisoUsuario['cocina']);
+            return (estado != 'crear' && permisoUsuario.includes('cocina'));
         case 'recibido':
-            return (estado === 'entrega' || estado === 'reclamo' || estado === 'cerrar') && (permisoUsuario && permisoUsuario['crear solicitud'] || permisoUsuario['cocina'] || permisoUsuario['admin'] || permisoUsuario['ver solicitudes']);
+            return (estado === 'entrega' || estado === 'reclamo' || estado === 'cerrar') && (permisoUsuario && permisoUsuario.includes('crear solicitud') || permisoUsuario.includes('cocina') || permisoUsuario.includes('admin') || permisoUsuario.includes('ver solicitudes'));
         case 'reclamo':
-            return (estado === 'entrega' || estado === 'reclamo' || estado === 'cerrar') && (permisoUsuario['crear solicitud'] || permisoUsuario['cocina'] || permisoUsuario['admin'] || permisoUsuario['ver solicitudes']);
+            return (estado === 'entrega' || estado === 'reclamo' || estado === 'cerrar') && (permisoUsuario.includes('crear solicitud') || permisoUsuario.includes('cocina') || permisoUsuario.includes('admin') || permisoUsuario.includes('ver solicitudes'));
         case 'imprimir':
-            return (estado != 'crear') && (permisoUsuario['cocina']);
+            return (estado != 'crear') && (permisoUsuario.includes('cocina'));
         default:
             return true;
     }
@@ -46,7 +46,7 @@ export function puedeEditar(
     filaId: string | number,
     filaSeleccionada: Set<string> | undefined,
     editandoFila: string | number | null,
-    permisoUsuario: Record<string, boolean>,
+    permisoUsuario: string[],
     estado: string
 ) {
     const estaSeleccionada = filaSeleccionada?.has(String(filaId));
@@ -54,17 +54,17 @@ export function puedeEditar(
 
     switch (columna) {
         case 'dietaSeleccionada':
-            return (estado === 'crear' && estaSeleccionada && (permisoUsuario['crear solicitud'] || permisoUsuario['admin'] || permisoUsuario['solicitud extraordinaria'])) || (estado === 'modificar' && estaEditando && permisoUsuario['crear solicitud'] );
+            return (estado === 'crear' && estaSeleccionada && (permisoUsuario.includes('crear solicitud') || permisoUsuario.includes('admin') || permisoUsuario.includes('solicitud extraordinaria')) || (estado === 'modificar' && estaEditando && permisoUsuario.includes('crear solicitud') ));
         case 'obsEnfermeria':
-            return (estado === 'crear' && estaSeleccionada && (permisoUsuario['crear solicitud'] || permisoUsuario['admin'] || permisoUsuario['solicitud extraordinaria'])) || (estado === 'modificar' && estaEditando && permisoUsuario['crear solicitud'] );
+            return (estado === 'crear' && estaSeleccionada && (permisoUsuario.includes('crear solicitud') || permisoUsuario.includes('admin') || permisoUsuario.includes('solicitud extraordinaria'))) || (estado === 'modificar' && estaEditando && permisoUsuario.includes('crear solicitud') );
         case 'obsNutricion':
-            return estado === 'modificar' && estaEditando && permisoUsuario['nutricion'];
+            return estado === 'modificar' && estaEditando && permisoUsuario.includes('nutricion');
         case 'obsCocina':
-            return ((estado === 'modificar' && estaEditando) || (estado === 'entrega' && estaEditando)) && permisoUsuario['cocina'];
+            return (estado === 'modificar' || estado === 'entrega')  && estaEditando && permisoUsuario.includes('cocina');
         case 'recibido':
-            return estado === 'entrega' && permisoUsuario['crear solicitud'];
+            return estado === 'entrega' && permisoUsuario.includes('crear solicitud');
         case 'reclamo':
-            return estado === 'entrega' && permisoUsuario['crear solicitud'];
+            return estado === 'entrega' && permisoUsuario.includes('crear solicitud');
         default:
             return false;
     }

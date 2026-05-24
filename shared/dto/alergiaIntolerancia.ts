@@ -1,5 +1,4 @@
 
-// de salida Backend
 export interface AlergiaIntolerancia {
   id: number;
   alergiasIntolerancias: string;

@@ -20,8 +20,8 @@ declare module 'express-serve-static-core' {
 }
 
 const loginSchema = z.object({
-  usuario: z.string({ required_error: "El nombre de usuario es obligatorio" }).min(1),
-  contrasena: z.string({ required_error: "La contraseña es obligatoria" }).min(1),
+  usuario: z.string({ error: "El nombre de usuario es obligatorio" }).min(1),
+  contrasena: z.string({ error: "La contraseña es obligatoria" }).min(1),
 });
 
 router.post('/inicio-sesion', validarBody(loginSchema), inicioSesion);

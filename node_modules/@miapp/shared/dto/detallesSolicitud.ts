@@ -25,6 +25,12 @@ export interface DetalleOrden {
   dietasValidas?: Dieta[];
 }
 
+export type TablaOrden =
+  | "modificar"
+  | "entrega"
+  | "reclamo"
+  | "cerrar";
+
 export interface OrdenBase {
   id: number;
   sala: string;
@@ -33,7 +39,7 @@ export interface OrdenBase {
   fechaCreacion: string;
   tiempoComida: string;
   estado: string;
-  tabla: string;
+  tabla: TablaOrden;
   code: string;
 }
 

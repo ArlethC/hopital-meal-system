@@ -6,7 +6,7 @@
     Version: 2.0.0
 */
 
-import type { PacientesList } from "@miapp/shared";
+import type { PacientesList, TablaOrden } from "@miapp/shared";
 
 import type { PacienteModificar, PacienteFinalizado, PacienteUi } from "../types/ui";
 import type { OrdenDieta, DetalleOrden } from "../types/solicitud";
@@ -106,35 +106,6 @@ export function fechaHoraActualATexto(): string {
   return `${dia} de ${mes} de ${año} ${horas}:${minutos}`;
 }
 
-export type EstadoTabla =
-   'entrega' 
-  | 'reclamo' 
-  | 'cerrar';
-
-const ESTADOS_MAP: Record<number, { solicitud: EstadoSolicitud; tabla: EstadoTabla }> = {
-  8: { solicitud: 'Enviada a Cocina', tabla: 'entrega' },
-  9: { solicitud: 'Modificada y Enviada a Cocina', tabla: 'entrega' },
-  10: { solicitud: 'Enviada a Sala', tabla: 'entrega' },
-  11: { solicitud: 'Recibida en Sala', tabla: 'reclamo' },
-  12: { solicitud: 'Recibida en Sala con Reclamo', tabla: 'reclamo' },
-  13: { solicitud: 'Cerrada', tabla: 'cerrar' },
-  5965: { solicitud: 'Cerrada con Reclamo', tabla: 'cerrar' },
-};
-
-export function getEstadoUIById(idEstado: number) {
-  return ESTADOS_MAP[idEstado] ?? { solicitud: 'Cerrada', tabla: 'cerrar' };
-}
-
-
-export type EstadoSolicitud =
-  | 'Enviada a Cocina'
-  | 'Modificada y Enviada a Cocina'
-  | 'Enviada a Sala'
-  | 'Recibida en Sala'
-  | 'Recibida en Sala con Reclamo'
-  | 'Cerrada'
-  | 'Cerrada con Reclamo';
-
 export function mapOrdenDietaToCard(orden: OrdenDieta): SolicitudCard {
   return {
     id: orden.id,
@@ -146,7 +117,6 @@ export function mapOrdenDietaToCard(orden: OrdenDieta): SolicitudCard {
     estado: orden.code,
   };
 }
-
 
 export function mapDetalleOrdenToPacienteModificar(detalle: DetalleOrden): PacienteModificar {
 
@@ -171,6 +141,7 @@ export function mapDetalleOrdenToPacienteModificar(detalle: DetalleOrden): Pacie
   };
 }
 
+
 export function formatearNombre(nombre: string) {
   const formateado = nombre
     .toLowerCase()
@@ -181,10 +152,20 @@ export function formatearNombre(nombre: string) {
   return formateado;
 }
 
+type EstadoUI =
+  | "entrega"
+  | "reclamo"
+  | "cerrar";
+
+function mapEstadoUI(tabla: TablaOrden): EstadoUI {
+  return tabla === "modificar"
+    ? "entrega"
+    : tabla;
+}
 
 export function convertirADetalleFinalizado(
   detalle: DetalleOrden,
-  estadoDetalle: number,
+  estadoDetalle: TablaOrden,
 ): PacienteFinalizado {
   return {
     id: detalle.idDetalle,
@@ -202,7 +183,7 @@ export function convertirADetalleFinalizado(
     cancelado: detalle.cancelado,
 
     dietaSeleccionada: detalle.dieta,
-    estado: getEstadoUIById(estadoDetalle).tabla,
+    estado: mapEstadoUI(estadoDetalle),
     recibido: detalle.recibido,
     reclamo: detalle.reclamo,
   };

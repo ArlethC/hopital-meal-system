@@ -56,7 +56,7 @@ interface PacienteModificar extends PacienteBase, PacienteObservaciones {
 }
 
 interface PacienteFinalizado extends PacienteBase, PacienteObservaciones {
-  estado: 'entrega' | 'reclamo' | 'cerrar';
+  estado: 'entrega' | 'reclamo' | 'cerrar' ;
   id: number;
   dietaSeleccionada: Dieta;
 }

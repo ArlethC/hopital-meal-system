@@ -13,6 +13,9 @@ import { obtenerEdificio } from './solicitudDietas.service';
 import { validarDietaExiste } from "./dietas.service";
 import { validarHorario } from "../services/horariosTiempoComida.service";
 import { validarYCompararFecha } from '../utils/validaciones';
+import { detalleActualizaPantalla } from './solictudSocket.service';
+import { actualizarPantallaMeriendas } from '../socket/emitters/meriendas.emitters';
+import { actualizarPantallaSolicitudes } from '../socket/emitters/solicitudes.emitters';
 import { toDetalleOrdentDto, toHistorialDto } from "../dtos/detallesSolicitud.dto";
 import type { DetalleOrden } from "@miapp/shared";
 
@@ -70,6 +73,18 @@ export async function modificarDetalleSolicitud({
     }
 
     await bd.ejecutarProcedimiento('dbo.ModificarSolicitudDietas', parametros);
+
+    const result = await detalleActualizaPantalla(id);
+
+    console.log(result)
+
+    if (result.aplica) {
+        if (result.tipo === 'MERIENDA') {
+            await actualizarPantallaMeriendas();
+        } else {
+            await actualizarPantallaSolicitudes();
+        }
+    }
 }
 
 export async function obtenerDetallesSolicitud(idSolicitud: number, incluirDietas: boolean = false): Promise<DetalleOrden[]> {
@@ -99,7 +114,7 @@ WHERE solicitud_id = @idSolicitud`, [{ nombre: 'idSolicitud', valor: idSolicitud
         edificio,
     }));
 
-    if (incluirDietas && (datosSolicitud.recordset[0].id_comida !== TIEMPOS_COMIDA.MERIENDA_AM  || datosSolicitud.recordset[0].id_comida !== TIEMPOS_COMIDA.MERIENDA_PM)) {
+    if (incluirDietas && (datosSolicitud.recordset[0].id_comida !== TIEMPOS_COMIDA.MERIENDA_AM || datosSolicitud.recordset[0].id_comida !== TIEMPOS_COMIDA.MERIENDA_PM)) {
         const pacientesConDietas = await asignarDietasValidasEdad(detallesTransformados, datosSolicitud.recordset[0].id_comida);
         return pacientesConDietas.map(toDetalleOrdentDto);
     }
@@ -136,8 +151,19 @@ WHERE solicitud_id = (
 	WHERE detalle_id = @idDetalle )`, [
         { nombre: 'estado', valor: ESTADOS_SOLICITUD.MODIFICADA.id },
         { nombre: 'idDetalle', valor: id },
-    ])
+    ]);
 
+    const result = await detalleActualizaPantalla(id);
+
+    console.log(result)
+
+    if (result.aplica) {
+        if (result.tipo === 'MERIENDA') {
+            await actualizarPantallaMeriendas();
+        } else {
+            await actualizarPantallaSolicitudes();
+        }
+    }
     return
 }
 
@@ -161,14 +187,26 @@ export async function reactivarDetalleSolicitud(id: number, usuario: string, use
 	    AND id_registro = @idDetalle
     ORDER BY cambio_fecha DESC`, [{ nombre: 'idDetalle', valor: id }])
 
-    const estadoAnterior = Number(valorAnterior.recordset[0].valor_anterior)
+    const estadoAnterior = Number(valorAnterior.recordset[0].valor_anterior);
 
-    return await bd.ejecutarProcedimiento('dbo.ModificarSolicitudDietas', [
+    await bd.ejecutarProcedimiento('dbo.ModificarSolicitudDietas', [
         { nombre: 'id_detalle', valor: id },
         { nombre: 'estado_nuevo', valor: estadoAnterior },
         { nombre: 'usuario', valor: usuario },
         { nombre: 'ip_user', valor: userIp },
     ]);
+
+    const result = await detalleActualizaPantalla(id);
+
+    console.log(result)
+
+    if (result.aplica) {
+        if (result.tipo === 'MERIENDA') {
+            await actualizarPantallaMeriendas();
+        } else {
+            await actualizarPantallaSolicitudes();
+        }
+    }
 }
 
 export async function obtenerDetalle(idDetalle: number, modificado: boolean = false) {
@@ -188,8 +226,8 @@ FROM Detalles_solicitud_dietas det
 	WHERE det.detalle_id = @idDetalle`;
 
     const detalles = await bd.consultaBD(query, [{ nombre: 'idDetalle', valor: idDetalle },
-        {nombre: 'estadoCancelado', valor: ESTADOS_DETALLE.CANCELADA},
-        {nombre: 'estadoModificado', valor: ESTADOS_DETALLE.MODIFICADA},
+    { nombre: 'estadoCancelado', valor: ESTADOS_DETALLE.CANCELADA },
+    { nombre: 'estadoModificado', valor: ESTADOS_DETALLE.MODIFICADA },
     ]);
 
     if (detalles.recordset.length === 0) {
@@ -267,7 +305,7 @@ ORDER BY h.cambio_fecha DESC;`;
 
     const historial = await bd.consultaBD(query, [
         { nombre: 'idDetalle', valor: id },
-        { nombre: 'estadoCancelado', valor: ESTADOS_DETALLE.CANCELADA}
+        { nombre: 'estadoCancelado', valor: ESTADOS_DETALLE.CANCELADA }
     ]);
 
     const datosLimpios = historial.recordset.map(obj =>

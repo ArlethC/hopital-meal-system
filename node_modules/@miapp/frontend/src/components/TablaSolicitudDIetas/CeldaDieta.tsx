@@ -66,6 +66,7 @@ const DietaCell: React.FC<PropsDietaCel> = ({
 
 
     if (esEditable) {
+
         return (
             <div className="flex flex-wrap items-center gap-2 w-full max-w-full ">
                 <select

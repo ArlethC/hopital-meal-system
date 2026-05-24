@@ -14,6 +14,9 @@ import { validarYCompararFecha } from "../utils/validaciones";
 import { toDocumentoDto } from "../dtos/documentosNutricion.dto";
 import type { Documento } from "@miapp/shared";
 import { CATALOGO_TIPO_DOCUMENTO } from "../config/Constantes";
+import { pacienteActualizaPantalla } from './solictudSocket.service';
+import { actualizarPantallaSolicitudes } from '../socket/emitters/solicitudes.emitters';
+import { actualizarPantallaMeriendas } from '../socket/emitters/meriendas.emitters';
 
 const repo = OrigenDatos.getRepository(DocumentoNutricion);
 const repo2 = OrigenDatos.getRepository(ValorCatalogoMedico);
@@ -65,6 +68,20 @@ export async function crearDocumentoNutricion({
     });
 
     await repo.save(nuevo);
+
+   const result = await pacienteActualizaPantalla(expediente);
+    if (obsDocumento && result.aplica) {
+        if (result.tipo === 'MERIENDA') {
+            await actualizarPantallaMeriendas();
+        } else {
+            if (result.tipo === 'MULTIPLE') {
+                await actualizarPantallaMeriendas();
+                await actualizarPantallaSolicitudes();
+            } else {
+                await actualizarPantallaSolicitudes();
+            }
+        }
+    }
 
     return obtenerDocumentoId(nuevo.idDocumento)
 }

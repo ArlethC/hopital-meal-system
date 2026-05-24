@@ -6,14 +6,12 @@
     Version: 1.0.2
 */
 import { bd } from '../config/database';
-import { obtenerTiempoComidaActual, obtenerTiempoComidaMerienda } from '../utils/funcionObtenerTiempoComida';
+import { obtenerTiempoComidaActual, obtenerTiempoComidaMerienda } from '../utils/funcionesTiempoComida';
 import { formatearNotificacion, type NotificacionBD, formatearReclamos} from '../utils/funcionesFormatear';
 
 export async function obtenerResumenCocina(): Promise<any> {
-    //const { id, nombre } = obtenerTiempoComidaActual();
+    const { id, nombre } = obtenerTiempoComidaActual();
     
-    const id = 1;
-    const nombre = 'Desayuno'
     const result = await bd.ejecutarProcedimiento('dbo.ObtenerResumenCocina', [
         { nombre: 'idTiempoComida', valor: id }
     ])

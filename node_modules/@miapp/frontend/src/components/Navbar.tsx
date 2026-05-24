@@ -90,10 +90,10 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogout, onNavigate }) => {
     const hasPermission = (permission?: Permission): boolean => {
         if (!permission) return true;
         if (Array.isArray(permission)) {
-            return permission.some(p => !!user.permissions[p]);
+            return permission.some(p => !!user.permissions.includes(p));
         }
 
-        return !!user.permissions[permission];
+        return user.permissions.includes(permission);
     };
 
     const filteredNavItems = navItems.filter(item => hasPermission(item.permission));

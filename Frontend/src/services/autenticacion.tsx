@@ -7,10 +7,11 @@
 */
 import axios from 'axios';
 import api from './AxiosService';
+import { initSocket, disconnectSocket } from './socket';
 
 type Usuario = {
   usuario: string | null;
-  permisos: Record<string, true>;
+  permisos: string[];
   accessToken: string
 }
 
@@ -20,6 +21,7 @@ export const inicioSesion = async (data: any): Promise<Usuario> => {
     withCredentials: true
   });
   sessionStorage.setItem('accessToken', response.data.accessToken);
+  initSocket(response.data.accessToken);
   return response.data;
 };
 
@@ -32,6 +34,7 @@ export const inicioSesionEmbedido = async (usuario: string, firma: string): Prom
     }
   });
   sessionStorage.setItem('accessToken', response.data.accessToken);
+  initSocket(response.data.accessToken);
   return response.data;
 };
 
@@ -43,6 +46,7 @@ export const verificarSesionUsuario = async (): Promise<Usuario> => {
 export const cerrarSesionUsuario = async (): Promise<void> => {
   await api.post('/api/cerrar-sesion');
   sessionStorage.removeItem('accessToken');
+  disconnectSocket();
 };
 
 

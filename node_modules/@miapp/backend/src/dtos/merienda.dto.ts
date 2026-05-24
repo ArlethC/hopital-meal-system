@@ -3,7 +3,7 @@
     Descripcion: Esquema ZOD para validar las meriendas de los pacientes.
     Autor: Marilyn Castro
     Fecha creacion: 31/07/2025
-    Version: 1.0.0
+    Version: 1.0.1
 */
 import type { Merienda } from "@miapp/shared";
 

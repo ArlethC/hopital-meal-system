@@ -11,7 +11,7 @@ import { inicioSesion, verificarSesionUsuario, cerrarSesionUsuario, inicioSesion
 interface AuthContextType {
     esEmbebido: boolean;
     usuario: string | null;
-    permisos: Record<string, true>;
+    permisos: string[];
     login: (usuario: string, contrasena: string) => Promise<{ ok: true } | { ok: false; error: string }>;
     logout: () => Promise<void>;
     cargando: boolean;
@@ -25,7 +25,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [isEmbedded, setIsEmbedded] = useState(false);
     const [usuario, setUsuario] = useState<string | null>(null);
-    const [permisos, setPermisos] = useState<Record<string, true>>({});
+    const [permisos, setPermisos] = useState<string[]>([]);
     const [cargando, setCargando] = useState(true);
     const [isLoggingOut, setIsLoggingOut] = useState(false);
 
@@ -148,11 +148,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         } finally {
             sessionStorage.removeItem('accessToken');
             setUsuario(null);
-            setPermisos({});
+            setPermisos([]);
         }
     };
 
-    const tienePermiso = (permiso: string) => !!permisos[permiso];
+    const tienePermiso = (permiso: string) => permisos.includes(permiso);
 
     return (
         <AuthContext.Provider value={{ esEmbebido: isEmbedded, usuario, permisos, cargando, login, logout, tienePermiso, isLoggingOut, setIsLoggingOut }}>

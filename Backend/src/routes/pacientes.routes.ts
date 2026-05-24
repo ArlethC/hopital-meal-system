@@ -10,11 +10,11 @@ const router = Router();
 import { paginacion } from '../middlewares/paginacion';
 import { verificarPermisos, verificarSesion } from '../middlewares/autenticacion';
 import { validarBody } from '../middlewares/validaciones';
-import { pacientesSala, pacienteInfo } from '../dtos/solictudDietas.dto';
+import { datosSalaPacientes, pacienteInfo } from "@miapp/shared";;
 import { obtenerPacientesxExpNom, obtenerPacienteSala, obtenerPacienteExpediente, obtenerSalasController} from "../controllers/paciente.controllers";
 
 router.get('/busqueda', verificarSesion, paginacion, obtenerPacientesxExpNom);
-router.post('/pacienteSala', verificarSesion, validarBody(pacientesSala), obtenerPacienteSala);
+router.post('/pacienteSala', verificarSesion, validarBody(datosSalaPacientes), obtenerPacienteSala);
 
 router.post('/infoPaciente', verificarPermisos(["admin", "solicitud extraordinaria"]), validarBody(pacienteInfo), obtenerPacienteExpediente);
 

@@ -129,7 +129,7 @@ export function formatearNotificacion(notif: NotificacionBD): string {
     return `La dieta de ${formatearNombre(notif.nombre_paciente)} fue ${tipoOperacion} en ${notif.sala_nombre}`;
   }
 
-  if(notif.operacion === 'modificar' && notif.columna_modificada === 'id_ARTICULO_vigente'){
+  if(notif.operacion === 'modificar' && notif.columna_modificada === 'id_dieta_vigente'){
     return `La dieta de ${formatearNombre(notif.nombre_paciente)} fue modificada de "${notif.valor_anterior}" a "${notif.nuevo_valor}" en ${notif.sala_nombre}`;
   }
 

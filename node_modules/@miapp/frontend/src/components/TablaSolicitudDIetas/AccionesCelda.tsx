@@ -18,7 +18,7 @@ interface PropsAccionesCel {
     setPacientes?: React.Dispatch<React.SetStateAction<PacienteUi[]>>;
     editandoFila: string | number | null,
     setEditandoFila: React.Dispatch<React.SetStateAction<string | number | null>>;
-    permisoUsuario: Record<string, boolean>;
+    permisoUsuario: string[];
     getPacienteKey: (paciente: PacienteUi) => string | number;
     selectFila: (id: string) => void;
     toggleHistorial: (id: string | number) => void;
@@ -121,7 +121,7 @@ const AccionesCell: React.FC<PropsAccionesCel> = ({
         );
     }
 
-    if (estado === 'modificar') {
+    if (estado === 'modificar' || (permisoUsuario.includes('cocina') && estado === 'entrega')) {
         const pacienteKey = getPacienteKey(paciente);
 
         if (editandoFila === pacienteKey) {
@@ -149,7 +149,7 @@ const AccionesCell: React.FC<PropsAccionesCel> = ({
         return (
             <>
                 <div className="flex space-x-2">
-                    {paciente.estado !== 'crear' && !paciente.cancelado && (permisoUsuario['cocina'] || permisoUsuario['nutricion'] || (tiempoComida !== 5957 && tiempoComida !== 5956)) && (
+                    {paciente.estado !== 'crear' && !paciente.cancelado && (permisoUsuario.includes('cocina') || permisoUsuario.includes('nutricion') || (tiempoComida !== 4 && tiempoComida !== 5)) && (
                         <button
                             onClick={() => handleEditarFila(paciente)}
                             className="p-1 text-blue-600 hover:text-blue-800"
@@ -158,7 +158,7 @@ const AccionesCell: React.FC<PropsAccionesCel> = ({
                             <Edit size={16} />
                         </button>
                     )}
-                    {permisoUsuario['crear solicitud'] && paciente.estado !== 'crear' && !paciente.cancelado && (
+                    {permisoUsuario.includes('crear solicitud') && paciente.estado !== 'crear' && !paciente.cancelado && (
                         <button
                             onClick={() => handleCancelarOrden(pacienteKey)}
                             className="p-1 text-red-600 hover:text-red-800"
@@ -167,7 +167,7 @@ const AccionesCell: React.FC<PropsAccionesCel> = ({
                             <Slash size={16} />
                         </button>
                     )}
-                    {permisoUsuario['crear solicitud'] && paciente.estado !== 'crear' && paciente.cancelado && (
+                    {permisoUsuario.includes('crear solicitud') && paciente.estado !== 'crear' && paciente.cancelado && (
                         <button
                             onClick={() => handleReactivarOrden(pacienteKey)}
                             className="p-1 text-green-600 hover:text-green-800"

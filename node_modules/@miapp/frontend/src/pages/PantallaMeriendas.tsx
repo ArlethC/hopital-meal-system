@@ -6,9 +6,11 @@
     Version: 1.0.1
 */
 import { Bell } from 'react-feather';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { obtenerResumenMerienda, type ResumenResponse } from '../services/cocina';
 import { formatearNombre } from '../utils/formatear';
+import { useSocket } from '../hooks/useSocket';
+import { useSocketRoom } from '../hooks/useSocketRoom';
 
 function getTextSizeClass(totalItems: number) {
     if (totalItems > 30) return "text-xs";
@@ -37,11 +39,6 @@ const MeriendaTV = () => {
             }
             console.error('Error al obtener resumen');
             setAlerta('Error al actualizar datos de cocina');
-
-            const alertaTimeout = setTimeout(() => {
-                setAlerta(null);
-            }, 10000);
-            return () => clearInterval(alertaTimeout);
         }
     };
 
@@ -55,34 +52,67 @@ const MeriendaTV = () => {
 
     useEffect(() => {
         actualizarDatos();
-
-        const interval = setInterval(actualizarDatos, 5 * 60 * 1000);
-
-        return () => clearInterval(interval);
     }, []);
 
+    const { socket } = useSocket();
+    useSocketRoom('meriendas-screen');
+
     useEffect(() => {
-        if (!data?.alertasFormateadas || data.alertasFormateadas.length === 0) return;
+        if (!socket) return;
+
+        const handler = () => {
+            actualizarDatos();
+        };
+
+        socket.on('room:message', handler);
+
+        return () => {
+            socket.off('room:message', handler);
+        }
+    }, [socket])
+
+    const alertaIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+    const alertaTimeoutRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+    useEffect(() => {
+        if (!data?.alertasFormateadas?.length) return;
+
+        if (alertaIntervalRef.current) {
+            clearInterval(alertaIntervalRef.current);
+        }
+
+        if (alertaTimeoutRef.current) {
+            clearTimeout(alertaTimeoutRef.current);
+        }
 
         let indiceActual = 0;
 
         setAlerta(data.alertasFormateadas[indiceActual]);
         indiceActual++;
 
-        const alertaInterval = setInterval(() => {
+        alertaIntervalRef.current = setInterval(() => {
             if (indiceActual < data.alertasFormateadas.length) {
                 setAlerta(data.alertasFormateadas[indiceActual]);
                 indiceActual++;
             } else {
-                clearInterval(alertaInterval);
+                if (alertaIntervalRef.current) {
+                    clearInterval(alertaIntervalRef.current);
+                }
             }
         }, 7000);
 
-        const ultimoTimeout = setTimeout(() => setAlerta(null), data.alertasFormateadas.length * 7000);
+        alertaTimeoutRef.current = setTimeout(() => {
+            setAlerta(null);
+        }, data.alertasFormateadas.length * 7000);
 
         return () => {
-            clearInterval(alertaInterval);
-            clearTimeout(ultimoTimeout);
+            if (alertaIntervalRef.current) {
+                clearInterval(alertaIntervalRef.current);
+            }
+
+            if (alertaTimeoutRef.current) {
+                clearTimeout(alertaTimeoutRef.current);
+            }
         };
     }, [data?.alertasFormateadas]);
 

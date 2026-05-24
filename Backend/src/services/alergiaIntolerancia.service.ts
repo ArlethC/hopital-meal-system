@@ -11,6 +11,9 @@ import { HttpError } from "../utils/HttpError";
 import { toAlergiaOutputDto } from "../dtos/alergiasIntolerancias.dto";
 import { registrarHistorial, TipoOperacion } from "./historial.service";
 import { existePaciente } from "./paciente.service";
+import { pacienteActualizaPantalla } from './solictudSocket.service';
+import { actualizarPantallaSolicitudes } from '../socket/emitters/solicitudes.emitters';
+import { actualizarPantallaMeriendas } from '../socket/emitters/meriendas.emitters';
 
 const repo = OrigenDatos.getRepository(AlergiasIntoleranciasPaciente);
 
@@ -29,6 +32,20 @@ export async function crearAlergiaIntolerancia(expediente: string, nombre: strin
     });
 
     await repo.save(nuevo);
+
+    const result = await pacienteActualizaPantalla(expediente);
+    if (result.aplica) {
+        if (result.tipo === 'MERIENDA') {
+            await actualizarPantallaMeriendas();
+        } else {
+            if (result.tipo === 'MULTIPLE') {
+                await actualizarPantallaMeriendas();
+                await actualizarPantallaSolicitudes();
+            } else {
+                await actualizarPantallaSolicitudes();
+            }
+        }
+    }
 
     return obtenerPorId(nuevo.id)
 }
@@ -114,7 +131,7 @@ export async function obtenerAlergiaIntolerancia(expediente: string) {
 
     return toAlergiaOutputDto({
         ...resultados,
-        alergias, 
+        alergias,
     });
 }
 

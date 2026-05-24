@@ -3,7 +3,7 @@
     Descripcion: Dto para crear y modificar alergias.
     Autor: Marilyn Castro
     Fecha creacion: 16/07/2025
-    Version: 1.0.0
+    Version: 1.0.1
 */
 
 import type { AlergiasIntoleranciasPaciente } from "@miapp/shared";

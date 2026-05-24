@@ -18,7 +18,8 @@ import { fetchTiemposComida, fecthSalas } from "../utils/fecthDatos";
 import type { DetalleOrden, OrdenDieta } from "../types/solicitud";
 import { obtenerSolicitudesCerrar } from "../services/solicitudDietas";
 import { validarCamposGenerico } from "../utils/validaciones";
-import { mapOrdenDietaToCard, convertirADetalleFinalizado, getEstadoUIById } from "../utils/formatear";
+import { mapOrdenDietaToCard, convertirADetalleFinalizado } from "../utils/formatear";
+import type { TablaOrden } from '@miapp/shared';
 
 
 const ReclamosPage = () => {
@@ -132,7 +133,7 @@ const ReclamosPage = () => {
         setSearch(true);
     };
 
-    const mapPacienteConExtra = (estado: number) => {
+    const mapPacienteConExtra = (estado: TablaOrden) => {
         return (data: DetalleOrden) => convertirADetalleFinalizado(data, estado);
     };
 
@@ -182,10 +183,10 @@ const ReclamosPage = () => {
                     <DetalleOrdenDieta
                         ordenDieta={ordenSeleccionada}
                         permisos={permisos}
-                        estadoTabla={getEstadoUIById(ordenSeleccionada.idEstado).tabla}
+                        estadoTabla={ordenSeleccionada.tabla}
                         idTiempoComida={ordenSeleccionada.idTiempoComida}
                         onVolver={() => { setSolicitudSeleccionada(null); setForzarVolver(true); handleSearch(1) }}
-                        mapPaciente={mapPacienteConExtra(ordenSeleccionada.idEstado)}
+                        mapPaciente={mapPacienteConExtra(ordenSeleccionada.tabla)}
                     />
 
                 ) : (

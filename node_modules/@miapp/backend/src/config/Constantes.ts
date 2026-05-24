@@ -27,12 +27,12 @@ export const ESTADOS_SOLICITUD = {
   ENVIADA_COCINA:  {
     id: 8,
     label: 'Enviada a Cocina',
-    tabla: 'entrega',
+    tabla: 'modificar',
   },
   MODIFICADA:  {
     id: 9,
     label: 'Modificada y Enviada a Cocina',
-    tabla: 'entrega',
+    tabla: 'modificar',
   },
   ENVIADA_SALA:  {
     id: 10,

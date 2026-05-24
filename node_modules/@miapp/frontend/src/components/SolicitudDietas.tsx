@@ -13,14 +13,15 @@ import { obtenerSolicitud } from '../services/solicitudDietas';
 import { fechaATexto } from "../utils/formatear";
 import type { PacienteUi } from "../types/ui";
 import { useNotifications } from '../hooks/notificacionHook';
+import type { TablaOrden } from '@miapp/shared';
 
 import TablaOrdenesDieta from "../components/TablaSolicitudDIetas/TableSolicitud";
 
 interface PropsOrdenDieta {
     ordenDieta: OrdenDieta;
-    permisos: Record<string, boolean>;
+    permisos: string[];
     idTiempoComida: number;
-    estadoTabla: 'modificar' | 'entrega' | 'reclamo' | 'cerrar';
+    estadoTabla: TablaOrden;
     onVolver?: () => void;
     habilitarAdvertenciaCambios?: boolean;
     onPacientesActualizados?: (pacientes: PacienteUi[]) => void;

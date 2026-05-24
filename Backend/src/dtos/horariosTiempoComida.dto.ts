@@ -3,7 +3,7 @@
     Descripcion: esquemas de ZOD para validar datos de los horarios.
     Autor: Marilyn Castro
     Fecha creacion: 7/07/2025
-    Version: 1.0.0
+    Version: 1.0.1
 */
 import type { HorarioTiempoComida } from '@miapp/shared';
 import { convertirHoraAHHmm } from '../utils/funcionesFormatear';

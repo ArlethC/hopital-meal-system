@@ -1,3 +1,11 @@
+/*
+    Archivo: pacientes.dto.ts
+    Descripcion: DTOs para la información de los pacientes
+    Autor: Marilyn Castro
+    Fecha creacion: 1/05/2026
+    Version: 1.0.0
+*/
+
 import type { Paciente, PacientesList, Salas } from "@miapp/shared";
 import { formatearEdad } from '../utils/funcionesFormatear';
 

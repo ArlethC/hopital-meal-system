@@ -3,7 +3,7 @@
     Descripcion: middlewares para validar los permisos de los usuarios y funciones para crear los tokens.
     Autor: Marilyn Castro
     Fecha creacion: 8/07/2025
-    Version: 1.0.2
+    Version: 1.0.3
 */
 import { sign, verify } from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
@@ -27,13 +27,13 @@ export const mapaPermisos: Record<number, string> = {
   9: 'solicitud extraordinaria',
 };
 
-function obtenerPermisosComoMapa(permisosBd: { permiso_usuario: number }[]): Record<string, true> {
-  const permisos: Record<string, true> = {};
+function obtenerPermisos(permisosBd: { permiso_usuario: number }[]): string[] {
+  const permisos: string[] = [];
 
   for (const { permiso_usuario } of permisosBd) {
     const nombre = mapaPermisos[permiso_usuario];
     if (nombre) {
-      permisos[nombre] = true;
+      permisos.push(nombre);
     } else {
       console.warn(`IdNodo ${permiso_usuario} no está definido en el mapa de permisos`);
     }
@@ -44,11 +44,11 @@ function obtenerPermisosComoMapa(permisosBd: { permiso_usuario: number }[]): Rec
 
 interface TokenPayload {
   usuario: string;
-  permisos: Record<string, true>;
+  permisos: string[];
 }
 
-export function generarTOKEN(usuario: string, permisosBd: { permiso_usuario: number }[]): { token: string; refreshToken: string; permisos: Record<string, true> } {
-  const permisos = obtenerPermisosComoMapa(permisosBd);
+export function generarTOKEN(usuario: string, permisosBd: { permiso_usuario: number }[]): { token: string; refreshToken: string; permisos: string[] } {
+  const permisos = obtenerPermisos(permisosBd);
 
   const payload: TokenPayload = {
     usuario,
@@ -83,13 +83,13 @@ export const verificarPermisos = (permisosRequeridos: string | string[]) => {
     try {
       const decodificado = verify(token, SECRET_ACCESS) as TokenPayload;
 
-      const permisosUsuario = decodificado.permisos || {};
+      const permisosUsuario = decodificado.permisos || [];
 
       const permisos = Array.isArray(permisosRequeridos)
         ? permisosRequeridos
         : [permisosRequeridos];
 
-      const tieneAlMenosUnPermiso = permisos.some(p => permisosUsuario[p]);
+      const tieneAlMenosUnPermiso = permisos.some(item => permisosUsuario.includes(item));
 
       if (!tieneAlMenosUnPermiso) {
         if (req.session) {

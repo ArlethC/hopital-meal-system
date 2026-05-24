@@ -16,8 +16,23 @@ import { existeIdTiempoComida, validarHorario } from "./horariosTiempoComida.ser
 import { validarDietaExiste } from "./dietas.service";
 import { validarYCompararFecha } from '../utils/validaciones';
 import { TIEMPOS_COMIDA } from '../config/Constantes';
+import { solicitudActualizaPantalla } from './solictudSocket.service';
+import { actualizarPantallaMeriendas } from '../socket/emitters/meriendas.emitters';
 
 const repo = OrigenDatos.getRepository(DetallesMerienda);
+
+const configMeriendas = [
+    {
+        tipo: TIEMPOS_COMIDA.MERIENDA_AM,
+        hora: 8,
+        label: 'AM',
+    },
+    {
+        tipo: TIEMPOS_COMIDA.MERIENDA_PM,
+        hora: 14,
+        label: 'PM',
+    },
+];
 
 export async function crearDetallesMerienda(datos: crearMeriendaShemaDTO, usuario: string, ipUsuario: string) {
     const paciente = await existePaciente(datos.expediente);
@@ -30,7 +45,7 @@ export async function crearDetallesMerienda(datos: crearMeriendaShemaDTO, usuari
 
     await validarDietaExiste(datos.idDieta);
 
-    const { fechaVal: fechaIni } = validarYCompararFecha(datos.fechaInicioMerienda)
+    const { fechaVal: fechaIni, esHoy } = validarYCompararFecha(datos.fechaInicioMerienda)
     if (fechaIni == null) {
         throw new HttpError("La fecha inicial debe ser válida y no menor a hoy", 400);
     }
@@ -48,8 +63,6 @@ export async function crearDetallesMerienda(datos: crearMeriendaShemaDTO, usuari
 
     //No puede crear una merienda para la fecha actual si el tiempo de modificacion ha pasado
     const horarioModificacion = await validarHorario(datos.idTiempoComida);
-
-    const { esHoy } = validarYCompararFecha(datos.fechaInicioMerienda);
 
     if (!horarioModificacion && esHoy) {
         throw new HttpError('El horario para crear meriendas ha terminado.', 422);
@@ -103,27 +116,50 @@ export async function crearDetallesMerienda(datos: crearMeriendaShemaDTO, usuari
 
     if (esHoy) {
         const ahora = new Date();
-        const horaAM = new Date();
-        horaAM.setHours(8, 0, 0, 0);
 
-        const horaPM = new Date();
-        horaPM.setHours(14, 0, 0, 0);
+        for (const config of configMeriendas) {
+            const horaLimite = new Date();
+            horaLimite.setHours(config.hora, 0, 0, 0);
 
-        if (datos.idTiempoComida === TIEMPOS_COMIDA.MERIENDA_AM && ahora > horaAM) {
-            await repo.query(`EXEC dbo.CrearMeriendas @fechaEntrega = @0, @tipoMerienda = @1, @usuarioCreacion = @2`, [
-                datos.fechaInicioMerienda, // @0
-                'AM',         // @1
-                usuario // @2
-            ]);
-        };
+            if (datos.idTiempoComida === config.tipo && ahora > horaLimite) {
+                try {
+                    await repo.query(
+                        `EXEC dbo.CrearMeriendas 
+         @fechaEntrega = @0, 
+         @tipoMerienda = @1, 
+         @usuarioCreacion = @2`,
+                        [
+                            datos.fechaInicioMerienda,
+                            config.label,
+                            usuario,
+                        ]
+                    );
+                    const debeActualizar = solicitudActualizaPantalla(
+                        datos.fechaInicioMerienda,
+                        config.tipo,
+                        'm'
+                    );
 
-        if (datos.idTiempoComida === TIEMPOS_COMIDA.MERIENDA_PM && ahora > horaPM) {
-            await repo.query(`EXEC dbo.CrearMeriendas @fechaEntrega = @0, @tipoMerienda = @1, @usuarioCreacion = @2`, [
-                datos.fechaInicioMerienda, // @0
-                'PM',         // @1
-                usuario // @2
-            ]);
-        };
+
+                    if (debeActualizar) {
+                        await actualizarPantallaMeriendas();
+                    }
+                } catch (error: any) {
+                    if (typeof error.message === 'string') {
+                        if (error.message.includes('fechas pasadas')) {
+                            throw new HttpError('No puedes guardar una solicitud con fecha anterior a hoy.', 400);
+                        }
+                        if (error.message.includes('Ya existe una solicitud')) {
+                            throw new HttpError('Ya existe una solicitud para esa sala y tiempo.', 400);
+                        }
+                        if (error.message.includes('No se insertó ningún detalle')) {
+                            throw new HttpError('Este paciente ya tiene solicitada merienda', 400);
+                        }
+                    }
+                    throw new HttpError('Error al procesar solicitud.', 500);
+                }
+            }
+        }
     }
 
     return obtenerPorId(nuevo.idDetalleMerienda);

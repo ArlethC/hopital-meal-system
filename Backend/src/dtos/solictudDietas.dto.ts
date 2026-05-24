@@ -3,7 +3,7 @@
     Descripcion: Esquema DTO para validar los datos relacionados a las solicitudes de dietas.
     Autor: Marilyn Castro
     Fecha creacion: 11/07/2025
-    Version: 1.0.0
+    Version: 1.0.1
 */
 import { z } from 'zod';
 import type { OrdenBase, DetalleOrden, ValorCatalogo, PacienteOmitido } from "@miapp/shared";

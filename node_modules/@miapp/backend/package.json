@@ -28,6 +28,7 @@
     "mime-types": "^3.0.1",
     "mssql": "^11.0.1",
     "multer": "^2.0.2",
+    "node-cron": "^4.2.1",
     "nodemailer": "^8.0.7",
     "reflect-metadata": "^0.2.2",
     "socket.io": "^4.8.3",

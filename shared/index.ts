@@ -14,3 +14,4 @@ export * from "./shemas/rangosEdad";
 export * from "./shemas/reclamos";
 export * from "./shemas/solicitud";
 export * from "./shemas/detallesSolicitud";
+export * from "./socketTypes";

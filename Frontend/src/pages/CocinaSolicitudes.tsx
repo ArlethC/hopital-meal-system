@@ -252,7 +252,7 @@ const CocinaPage = () => {
         if (orden.estado === 'Enviada a Cocina' || orden.estado === 'Modificada y Enviada a Cocina') {
             return mapDetalleOrdenToPacienteModificar;
         } else {
-            return (data: DetalleOrden) => convertirADetalleFinalizado(data, orden.idEstado);
+            return (data: DetalleOrden) => convertirADetalleFinalizado(data, orden.tabla);
         }
     };
 

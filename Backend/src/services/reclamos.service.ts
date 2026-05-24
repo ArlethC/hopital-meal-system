@@ -9,12 +9,16 @@ import { bd } from '../config/database';
 import { registrarHistorial, TipoOperacion, Cambio } from "./historial.service";
 import { Transaction } from 'mssql';
 import { HttpError } from "../utils/HttpError";
-import { CrearReclamo, ModificarReclamo, toReclamoDto } from '../dtos/reclamos.dto';
+import { CrearReclamoSchemaDTO, toReclamoDto } from '../dtos/reclamos.dto';
+import type { ModificarReclamoSchemaDTO } from "@miapp/shared";
 import { ESTADOS_DETALLE, ESTADOS_SOLICITUD, ESTADO_RECLAMO } from '../config/Constantes';
 import { verificarEstadoDetalle, tiempoComidaDetalle } from './detallesSolicitud.service';
 import { validarHorario } from './horariosTiempoComida.service';
 import { enviarCorreo } from '../utils/funcionEnviarCorreo';
 import { fechaATexto } from '../utils/funcionesFormatear';
+import { detalleActualizaPantalla } from './solictudSocket.service';
+import { actualizarPantallaSolicitudes } from '../socket/emitters/solicitudes.emitters';
+import { actualizarPantallaMeriendas } from '../socket/emitters/meriendas.emitters';
 
 type CambiosReclamo = {
     detalle_estado?: number;
@@ -144,7 +148,7 @@ export async function verificarExisteDetalle(idDetalle: number) {
     return true;
 }
 
-export async function crearReclamo(idDetalle: number, usuario: string, usuarioIP: string, data: CrearReclamo) {
+export async function crearReclamo(idDetalle: number, usuario: string, usuarioIP: string, data: CrearReclamoSchemaDTO) {
     //No se pueden crear reclamos de detalles cancelados
     const cancelado = await verificarEstadoDetalle(idDetalle, ESTADOS_DETALLE.CANCELADA);
 
@@ -187,7 +191,17 @@ export async function crearReclamo(idDetalle: number, usuario: string, usuarioIP
         usuarioIP,
         operacion: TipoOperacion.CREAR_RECLAMO,
         cambiosHistorial,
-    })
+    });
+
+    const result = await detalleActualizaPantalla(idDetalle);
+
+    if (result.aplica) {
+        if (result.tipo === 'MERIENDA') {
+            await actualizarPantallaMeriendas();
+        } else {
+            await actualizarPantallaSolicitudes();
+        }
+    }
 
     //Enviar el correo de notificacion
     const datos = await bd.consultaBD(`SELECT sol.sala_nombre, CONVERT(VARCHAR(10), fecha_entrega, 120) AS fechaEntrega, tc.valor_catalogo AS tiempoComida, cl.nombre_paciente, cl.id_paciente, dieta.descripcion, cat.valor_catalogo AS reclamo, det.obs_reclamo
@@ -247,7 +261,7 @@ WHERE cat.id_catalogo = 1 AND tc.id_catalogo = 3 AND det.detalle_id = @idDetalle
 
     return {
         mensaje: "Reclamo creado correctamente",
-        correoEnviado: true, 
+        correoEnviado: true,
         errorCorreo: null,
     };
 }
@@ -273,7 +287,7 @@ async function verificarEstadoReclamo(idDetalle: number) {
     return true;
 }
 
-export async function modificarReclamo(idDetalle: number, usuario: string, usuarioIP: string, data: ModificarReclamo) {
+export async function modificarReclamo(idDetalle: number, usuario: string, usuarioIP: string, data: ModificarReclamoSchemaDTO) {
     const estadoDetalle = await verificarEstadoReclamo(idDetalle);
 
     if (!estadoDetalle) {
@@ -294,7 +308,7 @@ export async function modificarReclamo(idDetalle: number, usuario: string, usuar
 
     if (data.observacion && data.observacion.trim() != '') {
         cambios.obs_reclamo = data.observacion.trim();
-        cambiosHistorial.push({ campo: 'obs_reclamo', valorAnterior: undefined, nuevoValor: data.observacion.trim()})
+        cambiosHistorial.push({ campo: 'obs_reclamo', valorAnterior: undefined, nuevoValor: data.observacion.trim() })
     };
 
     if (data.idReclamo) {

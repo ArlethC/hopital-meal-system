@@ -10,7 +10,7 @@ const router = Router();
 import {modificarDietasObs, modificarNutricion, modificarCocina, obtenerDetallesSolicitudParaModificar, cancelarDieta, reactivarDieta, detallesSolicitud, obtenerHistorialController  } from '../controllers/detallesSolicitud.controllers';
 import { verificarPermisos, verificarSesion } from '../middlewares/autenticacion';
 import { validarBody, validarIdParam } from '../middlewares/validaciones';
-import { modificacionEnfermeriaShema, modificacionNutricionShema, modificacionCocinaShema } from '../dtos/solictudDietas.dto';
+import { modificacionEnfermeriaShema, modificacionNutricionShema, modificacionCocinaShema } from "@miapp/shared";;
 
 router.patch('/enfermeria', verificarPermisos(['crear solicitud']),  validarBody(modificacionEnfermeriaShema), modificarDietasObs); //
 

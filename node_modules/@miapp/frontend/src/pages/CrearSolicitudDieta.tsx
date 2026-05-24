@@ -287,7 +287,7 @@ const listaMostrada = mostrarSoloNuevos
                 showSearchBar={false}
             />
 
-            {(permisos["solicitud extraordinaria"] || permisos['admin'])&& (
+            {(permisos.includes("solicitud extraordinaria") || permisos.includes('admin'))&& (
                 <div className="flex justify-end my-4">
                     <button
                         onClick={() => handleNuevoPaciente()}

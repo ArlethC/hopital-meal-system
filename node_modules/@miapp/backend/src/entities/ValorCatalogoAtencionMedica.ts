@@ -3,7 +3,7 @@
     Descripcion: Vista que representa a la tabla ValorCatalogosAtencionMedica.
     Autor: Marilyn Castro
     Fecha creacion: 7/07/2025
-    Version: 1.0.0
+    Version: 1.0.2
 */
 import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
 

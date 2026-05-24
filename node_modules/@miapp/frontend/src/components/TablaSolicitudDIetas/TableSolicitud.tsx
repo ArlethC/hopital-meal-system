@@ -29,7 +29,7 @@ import TablaEncabezado from './TablaEncabezado';
 interface PropsTabla {
     estado: string;
     pacientes: PacienteUi[];
-    permisoUsuario: Record<string, boolean>;
+    permisoUsuario: string[];
     filaSeleccionada?: Set<string>;
     setFilaSeleccionada?: React.Dispatch<React.SetStateAction<Set<string>>>;
     setPacientes: React.Dispatch<React.SetStateAction<PacienteUi[]>>;
@@ -316,7 +316,7 @@ const TablaOrdenesDieta: React.FC<PropsTabla> = ({
     };
 
     const renderCeldaObservaciones = (paciente: PacienteUi) => {
-        if (estado != 'crear' && permisoUsuario && permisoUsuario['cocina']) {
+        if (estado != 'crear' && permisoUsuario && permisoUsuario.includes('cocina')) {
             const obsNutricion = obtenerValorCampo(paciente, 'obsNutricion' as keyof PacienteUi, cambiosTemporales, getPacienteKey(paciente));
             const obsEnfermeria = obtenerValorCampo(paciente, 'obsEnfermeria' as keyof PacienteUi, cambiosTemporales, getPacienteKey(paciente));
 
@@ -333,7 +333,7 @@ const TablaOrdenesDieta: React.FC<PropsTabla> = ({
 
         const idPaciente = String(getPacienteKey(paciente));
 
-        if (estado != 'crear' && permisoUsuario['cocina'] && onImprimirEtiqueta) {
+        if (estado != 'crear' && permisoUsuario.includes('cocina') && onImprimirEtiqueta) {
             return (
                 <button
                     onClick={() => onImprimirEtiqueta(idPaciente)}
@@ -494,7 +494,7 @@ const TablaOrdenesDieta: React.FC<PropsTabla> = ({
                                                 </button>
 
                                             )}
-                                            {(['crear', 'modificar'].includes(paciente.estado) && permisoUsuario["crear alergias"]) && (
+                                            {(['crear', 'modificar'].includes(paciente.estado) && permisoUsuario.includes("crear alergias")) && (
                                                 <AlergiaAgregarButton
                                                     expediente={paciente.expediente}
                                                     nombre={paciente.paciente}
@@ -550,7 +550,7 @@ const TablaOrdenesDieta: React.FC<PropsTabla> = ({
                                                         <span className="text-sm">Ver</span>
                                                     </button>
                                                 ) : (
-                                                    (estado !== 'cerrar' && permisoUsuario['crear solicitud']) && (
+                                                    (estado !== 'cerrar' && permisoUsuario.includes('crear solicitud')) && (
                                                         <button
                                                             onClick={() => abrirModal('reclamo', paciente)}
                                                             className="flex items-center space-x-1 text-blue-600 hover:text-blue-700 cursor-pointer"
@@ -634,7 +634,7 @@ const TablaOrdenesDieta: React.FC<PropsTabla> = ({
                     reclamo={pacienteSeleccionado.reclamo ?? false}
                     paciente={pacienteSeleccionado}
                     onReclamoCreado={() => handleCambiarValor(getPacienteKey(pacienteSeleccionado), 'reclamo', true)}
-                    forzarSoloVer={(estado === 'cerrar' || permisoUsuario['crear solicitud'] !== true)}
+                    forzarSoloVer={(estado === 'cerrar' || permisoUsuario.includes('crear solicitud') !== true)}
                 />
 
             )}

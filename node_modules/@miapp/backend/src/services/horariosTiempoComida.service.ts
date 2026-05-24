@@ -14,6 +14,7 @@ import { cerrarSolicitudesPorTiempo } from './solicitudDietas.service';
 import type { HorarioTiempoComida } from "@miapp/shared";
 import { CATALOGO_COMIDA } from "../config/Constantes";
 import { toHorarioDto } from '../dtos/horariosTiempoComida.dto';
+import cron, { ScheduledTask } from 'node-cron';
 
 const repo = OrigenDatos.getRepository(HorariosTiempoComida);
 const repo2 = OrigenDatos.getRepository(ValorCatalogoMedico);
@@ -250,22 +251,41 @@ export async function programarCierres() {
     });
 }
 
+const jobs = new Map<number, ScheduledTask>();
+
 export function programarCierreParaHorario(idTiempoComida: number, horaLimite: string) {
-    const [h, m, s] = horaLimite.split(':').map(Number);
-    const ahora = new Date();
-    const proximaEjecucion = new Date();
-    proximaEjecucion.setHours(h, m, s || 0, 0);
+    const existing = jobs.get(idTiempoComida);
+    if (existing) existing.stop();
 
-    if (proximaEjecucion <= ahora) {
-        proximaEjecucion.setDate(proximaEjecucion.getDate() + 1);
-    }
+    const [h, m] = horaLimite.split(':');
 
-    const msHastaEjecucion = proximaEjecucion.getTime() - ahora.getTime() + 60000;
+    const job = cron.schedule(`${m} ${h} * * *`, async () => {
+        await cerrarSolicitudesPorTiempo(idTiempoComida);
+    },
+        {
+            timezone: 'America/Tegucigalpa',
+        }
+    );
 
-    setTimeout(() => {
-        cerrarSolicitudesPorTiempo(idTiempoComida);
-        programarCierreParaHorario(idTiempoComida, horaLimite);
-    }, msHastaEjecucion);
+    jobs.set(idTiempoComida, job);
 }
+
+// export function programarCierreParaHorario(idTiempoComida: number, horaLimite: string) {
+//     const [h, m, s] = horaLimite.split(':').map(Number);
+//     const ahora = new Date();
+//     const proximaEjecucion = new Date();
+//     proximaEjecucion.setHours(h, m, s || 0, 0);
+
+//     if (proximaEjecucion <= ahora) {
+//         proximaEjecucion.setDate(proximaEjecucion.getDate() + 1);
+//     }
+
+//     const msHastaEjecucion = proximaEjecucion.getTime() - ahora.getTime() + 60000;
+
+//     setTimeout(() => {
+//         cerrarSolicitudesPorTiempo(idTiempoComida);
+//         programarCierreParaHorario(idTiempoComida, horaLimite);
+//     }, msHastaEjecucion);
+// }
 
 

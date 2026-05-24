@@ -16,6 +16,7 @@ export const crearReclamoSchema = z.object({
     archivo: z.string().url().optional()
 });
 
+export type CrearReclamoSchemaDTO = z.infer<typeof crearReclamoSchema>;
 
 
 export function toReclamoDto(reclamo: any): Reclamo {

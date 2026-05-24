@@ -3,7 +3,7 @@
     Descripcion: Esquema Zod para validar los datos de los grupos de dieta, rango de edad y tiempo de comida.
     Autor: Marilyn Castro
     Fecha creacion: 3/07/2025
-    Version: 1.0.0
+    Version: 1.0.1
 */
 import type { GrupoDieComEd } from "@miapp/shared";
 
