@@ -37,3 +37,6 @@ https://youtu.be/PDxyCaGh9Z0
 - Análisis del sistema existente y su integración  
 - Desarrollo completo de la solución (frontend y backend)  
 - Creación de tablas, análisis de relaciones y desarrollo de procedimientos almacenados sobre una base de datos existente.
+
+## Autor 
+[ArlethC](https://github.com/ArlethC)
